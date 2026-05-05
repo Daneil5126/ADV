@@ -27,7 +27,7 @@
         .stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 16px; margin-bottom: 20px; }
         .stat-card { background: white; border-radius: 10px; padding: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
         .stat-card .label { font-size: 0.75rem; color: #777; text-transform: uppercase; }
-        .stat-card .value { font-size: 1.6rem; font-weight: bold; margin-top: 4px; word-break: break-word; }
+        .stat-card .value { font-size: 1.4rem; font-weight: bold; margin-top: 4px; word-break: break-word; line-height: 1.3; }
         .grid-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
         .card { background: white; border-radius: 10px; padding: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
         .card h3 { font-size: 0.95rem; margin-bottom: 12px; color: #555; text-transform: uppercase; }
@@ -353,24 +353,29 @@
 
         let pieChartInstance = null;
 
+        // 修改后的日期时间格式：例如 5 May 2026<br>3:22:05 PM
         function formatTime12h() {
             const now = new Date();
-            const dd = String(now.getDate()).padStart(2,'0');
-            const mm = String(now.getMonth()+1).padStart(2,'0');
+            const dd = now.getDate();
+            const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+            const monthName = months[now.getMonth()];
             const yyyy = now.getFullYear();
             let hr = now.getHours();
             const ampm = hr >= 12 ? 'PM' : 'AM';
             hr = hr % 12 || 12;
             const min = String(now.getMinutes()).padStart(2,'0');
             const sec = String(now.getSeconds()).padStart(2,'0');
-            return `${dd}/${mm}/${yyyy} ${hr}:${min}:${sec} ${ampm}`;
+            return `${dd} ${monthName} ${yyyy}<br>${hr}:${min}:${sec} ${ampm}`;
         }
 
         function startClock() {
             const el = document.getElementById('liveDateTime');
             if (!el) return;
-            el.textContent = formatTime12h();
-            setInterval(() => { el.textContent = formatTime12h(); }, 1000);
+            function update() {
+                el.innerHTML = formatTime12h();
+            }
+            update();
+            setInterval(update, 1000);
         }
 
         function renderDashboard() {
