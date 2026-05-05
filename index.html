@@ -7,7 +7,6 @@
   <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <style>
-    /* ========== 全局样式 ========== */
     * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
     body { background: #f5f7fa; color: #2c3e50; display: flex; min-height: 100vh; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
     .sidebar { width: 220px; background: #1e293b; color: white; padding: 20px 0; display: flex; flex-direction: column; transition: transform 0.3s; z-index: 100; position: fixed; top: 0; bottom: 0; left: 0; }
@@ -55,7 +54,7 @@
     .pagination button:disabled { opacity: 0.5; cursor: default; }
     .placeholder { text-align: center; padding: 60px 20px; color: #aaa; }
 
-    /* ========== 计算器专属样式（完全保留原设计） ========== */
+    /* 计算器样式 (保留) */
     .calculator { max-width: 580px; width: 100%; background: white; border-radius: 48px; box-shadow: 0 25px 45px -12px rgba(0,0,0,0.25); overflow: hidden; padding: 24px 20px 28px; margin: 0 auto; }
     .calc-header { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 12px; margin-bottom: 16px; padding-bottom: 8px; border-bottom: 1px solid #eef2f8; }
     .calc-title { font-size: 1.6rem; font-weight: 700; background: linear-gradient(135deg, #1e6f4c, #2b8c5e); background-clip: text; -webkit-background-clip: text; color: transparent; }
@@ -104,8 +103,6 @@
     .source-badge { font-size: 0.55rem; background: #e1e9f0; display: inline-block; padding: 2px 6px; border-radius: 20px; margin-top: 4px; }
 
     @media (max-width: 550px) { .input-label { width: 100%; margin-bottom: 4px; } .input-row { flex-direction: column; align-items: stretch; } .manual-rate-row { flex-direction: column; align-items: stretch; } .plus-area { width: 100%; margin-top: 8px; } }
-
-    /* 响应式处理 */
     @media (max-width: 900px) {
       .grid-2col { grid-template-columns: 1fr; }
       .summary-group-card { flex-direction: column-reverse; }
@@ -172,28 +169,43 @@
         <div class="stat-card"><div class="label">Active Items</div><div class="value" id="activeItems">0</div></div>
         <div class="stat-card"><div class="label">Low Stock (&lt;5)</div><div class="value" id="lowStockCount">0</div></div>
         <div class="stat-card"><div class="label">Total QTY</div><div class="value" id="totalQty">0</div></div>
+        <div class="stat-card"><div class="label">RM Total</div><div class="value" id="totalOnHandTop">RM 0.00</div></div>
       </div>
+
       <div class="grid-2col">
         <div class="card">
           <h3>📊 Sum of On Hand Cost by Group</h3>
           <div class="summary-group-card">
-            <div class="summary-table-wrap"><table class="group-table" id="groupSummaryTable"><tbody></tbody></table></div>
+            <div class="summary-table-wrap">
+              <table class="group-table" id="groupSummaryTable">
+                <thead><tr><th>Group</th><th>Qty</th><th>On Hand Cost</th></tr></thead>
+                <tbody></tbody>
+              </table>
+            </div>
             <div class="chart-wrap"><canvas id="pieChart"></canvas></div>
           </div>
-          <div style="text-align:right; font-weight:bold; margin-top:8px;">Total: <span id="totalOnHand">RM 0.00</span></div>
         </div>
         <div style="display:flex; flex-direction:column; gap:20px;">
-          <div class="card"><h3>⚠️ Low Stock Items</h3><table class="mini-table"><thead><tr><th>Name</th><th>Stock</th></tr></thead><tbody id="lowStockTable"></tbody></table></div>
-          <div class="card"><h3>🏆 Top Items by On Hand Cost</h3><table class="mini-table"><thead><tr><th>Name</th><th>On Hand Cost</th></tr></thead><tbody id="topItemsTable"></tbody></table></div>
+          <div class="card">
+            <h3>⚠️ Low Stock Items</h3>
+            <table class="mini-table"><thead><tr><th>Name</th><th>Stock</th></tr></thead><tbody id="lowStockTable"></tbody></table>
+          </div>
+          <div class="card">
+            <h3>🏆 Top Items by On Hand Cost</h3>
+            <table class="mini-table">
+              <thead><tr><th>Name</th><th>Qty</th><th>On Hand Cost</th></tr></thead>
+              <tbody id="topItemsTable"></tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- Calculator Page (完全替换为 v6.6) -->
+    <!-- Calculator Page (v6.6) -->
     <div class="page" id="page-calculator">
       <div class="calculator" id="app">
         <div class="calc-header">
-          <div><span class="calc-title" id="mainTitle">Product Calculator</span><span class="calc-version" id="versionText"> v6.6 (基础稳定版)</span></div>
+          <div><span class="calc-title" id="mainTitle">Product Calculator</span><span class="calc-version" id="versionText"> v6.6 (Base Stable)</span></div>
           <div class="calc-datetime" id="calcDatetime">--</div>
           <div class="lang-switch">
             <button class="lang-btn active" data-lang="en">EN</button>
@@ -203,53 +215,53 @@
 
         <div class="rate-panel">
           <div class="rate-card">
-            <div class="rate-label" id="liveLabel">USD/MYR 基准汇率</div>
+            <div class="rate-label" id="liveLabel">USD/MYR Base Rate</div>
             <div class="rate-number" id="liveRateValue">--</div>
             <div class="rate-date" id="liveDate">--</div>
             <div class="source-badge" id="sourceHint">--</div>
           </div>
           <div class="plus-area">
-            <span id="plusLabel">➕ 额外加成</span>
+            <span id="plusLabel">➕ Markup</span>
             <input type="text" id="markupInput" class="plus-input" inputmode="decimal" value="0.00">
-            <button class="refresh-btn" id="refreshBtn">🔄 刷新汇率</button>
+            <button class="refresh-btn" id="refreshBtn">🔄 Refresh Rate</button>
           </div>
         </div>
 
         <div class="manual-rate-row">
-          <span id="manualLabel">✏️ 手动输入汇率 (MYR/USD)</span>
-          <input type="text" id="manualRateInput" class="manual-rate-input" inputmode="decimal" placeholder="例如 4.0465" step="0.0001">
-          <button id="applyManualBtn" class="apply-manual-btn">📌 应用并保存</button>
-          <button id="resetAutoBtn" class="reset-auto-btn">🔄 恢复自动汇率</button>
-          <span class="manual-note" id="manualNote">离线时可用，将覆盖自动获取值</span>
+          <span id="manualLabel">✏️ Manual Rate (MYR/USD)</span>
+          <input type="text" id="manualRateInput" class="manual-rate-input" inputmode="decimal" placeholder="e.g. 4.0465">
+          <button id="applyManualBtn" class="apply-manual-btn">📌 Apply & Save</button>
+          <button id="resetAutoBtn" class="reset-auto-btn">🔄 Reset to Auto</button>
+          <span class="manual-note" id="manualNote">Overrides auto-fetch, works offline</span>
         </div>
 
         <div class="applied-rate-row">
-          <span class="applied-label" id="appliedRateLabel">💱 最终应用汇率 (基准+加成) :</span>
+          <span class="applied-label" id="appliedRateLabel">💱 Final Rate (Base+Markup) :</span>
           <span class="applied-value" id="appliedRateValue">0.0000</span>
         </div>
 
-        <div class="formula-banner"><span id="formulaLabel">📐 公式：</span><code id="formulaCode">Landing Cost = FOB ÷ SST × 汇率 ÷ Freight ÷ GP</code></div>
+        <div class="formula-banner"><span id="formulaLabel">📐 Formula: </span><code id="formulaCode">Landing Cost = FOB ÷ SST × Rate ÷ Freight ÷ GP</code></div>
 
         <div class="input-row"><span class="input-label" id="fobLabel">💰 FOB (USD)</span><input type="text" id="fobInput" class="input-field smart-number-input" inputmode="decimal" value="0"></div>
         <div class="input-row"><span class="input-label" id="sstLabel">🧾 SST/VAT Tax</span><div class="radio-group" id="sstGroup"><label><input type="radio" name="sst" value="0.95" checked> <span id="sstOpt1">0.95 (5%)</span></label><label><input type="radio" name="sst" value="0.90"> <span id="sstOpt2">0.90 (10%)</span></label></div></div>
-        <div class="input-row"><span class="input-label" id="freightLabel">🚢 Freight (除数)</span><input type="text" id="calcFreightInput" class="input-field" inputmode="decimal" value="0.97"><div class="small-hint" id="freightHint">动态提示</div></div>
-        <div class="input-row"><span class="input-label" id="gpLabel">📈 GP% 除数</span><input type="text" id="calcGpInput" class="input-field" inputmode="decimal" value="0.97"><div class="small-hint" id="gpHint">动态提示</div></div>
-        <div class="input-row"><span class="input-label" id="priceLabel">🏷️ 预期售价 (MYR)</span><input type="text" id="sellingPrice" class="input-field smart-number-input" inputmode="decimal" value="0"></div>
+        <div class="input-row"><span class="input-label" id="freightLabel">🚢 Freight (Divisor)</span><input type="text" id="calcFreightInput" class="input-field" inputmode="decimal" value="0.97"><div class="small-hint" id="freightHint">Cost increase ≈ 3.09%</div></div>
+        <div class="input-row"><span class="input-label" id="gpLabel">📈 GP% Divisor</span><input type="text" id="calcGpInput" class="input-field" inputmode="decimal" value="0.97"><div class="small-hint" id="gpHint">Gross margin ≈ 3.09%</div></div>
+        <div class="input-row"><span class="input-label" id="priceLabel">🏷️ Selling Price (MYR)</span><input type="text" id="sellingPrice" class="input-field smart-number-input" inputmode="decimal" value="0"></div>
 
         <div class="result-card">
           <div class="result-line"><span id="step1Label">FOB ÷ SST (USD) :</span><span id="step1Val">$0.00</span></div>
-          <div class="result-line"><span id="step2Label">× 汇率后 :</span><span id="step2Val">0.00 MYR</span></div>
+          <div class="result-line"><span id="step2Label">× Rate :</span><span id="step2Val">0.00 MYR</span></div>
           <div class="result-line"><span id="step3Label">÷ Freight :</span><span id="step3Val">0.00 MYR</span></div>
         </div>
-        <div class="final-cost"><span id="landingLabel">📦 Landing Cost (向上取整)</span><span id="landingVal" class="final-number">0.00 MYR</span></div>
-        <div id="gpCard" class="gp-card"><span id="gpLabelText">📊 毛利率 (基于售价)</span><div style="display: flex; align-items: center;"><span id="gpPercent" class="gp-value">0.00%</span><span id="warningIcon" class="badge">⚠️ LOSS</span></div></div>
-        <div class="result-line" style="background: transparent; padding: 8px 0; border: none;"><span id="profitLabel">💵 毛利额 :</span><span id="profitAmount">0.00 MYR</span></div>
+        <div class="final-cost"><span id="landingLabel">📦 Landing Cost (Ceil)</span><span id="landingVal" class="final-number">0.00 MYR</span></div>
+        <div id="gpCard" class="gp-card"><span id="gpLabelText">📊 Gross Margin (based on price)</span><div style="display: flex; align-items: center;"><span id="gpPercent" class="gp-value">0.00%</span><span id="warningIcon" class="badge">⚠️ LOSS</span></div></div>
+        <div class="result-line" style="background: transparent; padding: 8px 0; border: none;"><span id="profitLabel">💵 Gross Profit :</span><span id="profitAmount">0.00 MYR</span></div>
         
-        <button id="clearBtn" class="action-btn">🗑️ <span id="clearText">一键清除</span></button>
+        <button id="clearBtn" class="action-btn">🗑️ <span id="clearText">Clear All</span></button>
         <div id="errorMsg" class="error-msg"></div>
         <div class="footer">
-          <div id="versionInfo">💡 提示：汇率会自动</div>
-          <div class="powered" id="poweredBy">Powered By Daneil.G.CS | 基础稳定版 v6.6</div>
+          <div id="versionInfo">💡 Tip: Rate auto-saves</div>
+          <div class="powered" id="poweredBy">Powered By Daneil.G.CS | Base Stable v6.6</div>
         </div>
       </div>
     </div>
@@ -260,7 +272,15 @@
       <div class="card">
         <div class="search-bar">
           <input type="text" id="invSearchInput" placeholder="Search Name or ID..." oninput="goToPage(1)">
-          <select id="invGroupFilter" onchange="goToPage(1)"><option value="all">All Groups</option></select>
+          <select id="invGroupFilter" onchange="goToPage(1)">
+            <option value="all">All Groups</option>
+          </select>
+          <select id="invPageSize" onchange="changePageSize()">
+            <option value="20">20</option>
+            <option value="50">50</option>
+            <option value="100">100</option>
+            <option value="150">150</option>
+          </select>
           <span class="last-updated" id="invLastUpdated">Last updated: N/A</span>
         </div>
         <div class="margin-bar">
@@ -290,8 +310,9 @@
     const STORAGE_KEY = 'inv_data';
     const LAST_UPLOAD_KEY = 'inv_last_upload';
     const MARGIN_KEY = 'inv_margin';
-    const PAGE_SIZE = 15;
     let currentPage = 1;
+    let currentPageSize = 20;
+
     function formatMoney(val) { return Number(val).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
     function loadData() { const j = localStorage.getItem(STORAGE_KEY); return j ? JSON.parse(j) : []; }
     function saveData(d) { localStorage.setItem(STORAGE_KEY, JSON.stringify(d)); }
@@ -306,7 +327,6 @@
     function getMargin() { const v = localStorage.getItem(MARGIN_KEY); return v ? parseFloat(v) : 0; }
     function saveMargin(v) { localStorage.setItem(MARGIN_KEY, v.toString()); }
 
-    // 页面切换
     function switchPage(pageName) {
       document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
       const target = document.getElementById('page-' + pageName);
@@ -329,69 +349,143 @@
       });
     });
 
-    // Dashboard
     let pieChartInstance = null;
+
     function renderDashboard() {
       const data = loadData();
-      const groupMap = new Map();
+      const groupMap = new Map();      // On Hand Cost
+      const groupQtyMap = new Map();   // Total Stock
+
       data.forEach(i => {
         const g = i.productGroup || 'Uncategorized';
         groupMap.set(g, (groupMap.get(g) || 0) + (i.onHandCost || 0));
+        groupQtyMap.set(g, (groupQtyMap.get(g) || 0) + (i.stockLevel || 0));
       });
+
+      // 固定的颜色映射
+      const groupColorMap = {
+        'ASUS': '#3498db',
+        'AOC': '#e74c3c',
+        'Gigabyte': '#2ecc71',
+        'AMD': '#f39c12',
+        'MSI': '#9b59b6',
+        'PROMETHEAN': '#1abc9c',
+        'RICOH': '#e67e22',
+        'LG': '#95a5a6',
+        'POWER COLOR': '#34495e'
+      };
+      const otherColors = ['#d35400', '#c0392b', '#16a085', '#8e44ad', '#27ae60', '#2980b9', '#f1c40f', '#7f8c8d'];
+
+      // 按成本降序排列
       const sorted = Array.from(groupMap.entries()).sort((a,b) => b[1] - a[1]);
+      const labels = sorted.map(a => a[0]);
+      const values = sorted.map(a => a[1]);
       const grandTotal = sorted.reduce((s, [,v]) => s + v, 0);
+      const grandQty = Array.from(groupQtyMap.values()).reduce((s, v) => s + v, 0);
+
+      // 分配颜色
+      let otherColorIndex = 0;
+      const backgroundColor = labels.map(label => {
+        if (groupColorMap[label]) return groupColorMap[label];
+        const color = otherColors[otherColorIndex % otherColors.length];
+        otherColorIndex++;
+        return color;
+      });
+
+      // 更新分组汇总表（带颜色方块，三列：Group | Qty | On Hand Cost）
       const tbody = document.querySelector('#groupSummaryTable tbody');
       tbody.innerHTML = '';
-      sorted.forEach(([group, cost]) => {
+      sorted.forEach(([group, cost], index) => {
         const tr = document.createElement('tr');
-        tr.innerHTML = `<td>${escHtml(group)}</td><td>RM ${formatMoney(cost)}</td>`;
+        const color = backgroundColor[index];
+        const qty = groupQtyMap.get(group) || 0;
+        tr.innerHTML = `
+          <td>
+            <span style="display:inline-block; width:12px; height:12px; border-radius:3px; background:${color}; margin-right:8px; vertical-align:middle;"></span>
+            ${escHtml(group)}
+          </td>
+          <td>${qty.toLocaleString()}</td>
+          <td>RM ${formatMoney(cost)}</td>
+        `;
         tbody.appendChild(tr);
       });
       if (sorted.length > 0) {
         const tr = document.createElement('tr');
         tr.classList.add('grand-total');
-        tr.innerHTML = `<td>Grand Total</td><td>RM ${formatMoney(grandTotal)}</td>`;
+        tr.innerHTML = `<td>Grand Total</td><td>${grandQty.toLocaleString()}</td><td>RM ${formatMoney(grandTotal)}</td>`;
         tbody.appendChild(tr);
       }
-      document.getElementById('totalOnHand').textContent = `RM ${formatMoney(grandTotal)}`;
+
+      // 更新顶部 Total On Hand（重复使用但保持同步）
+      document.getElementById('totalOnHandTop').textContent = `RM ${formatMoney(grandTotal)}`;
+
+      // 饼图（隐藏图例）
       if (pieChartInstance) { pieChartInstance.destroy(); pieChartInstance = null; }
       const canvas = document.getElementById('pieChart');
       if (sorted.length === 0) {
         canvas.style.display = 'none';
       } else {
         canvas.style.display = 'block';
-        const labels = sorted.map(a => a[0]);
-        const values = sorted.map(a => a[1]);
-        const colors = ['#3498db','#e74c3c','#2ecc71','#f39c12','#9b59b6','#1abc9c','#e67e22','#95a5a6','#34495e','#d35400','#c0392b','#16a085','#8e44ad'];
         pieChartInstance = new Chart(canvas.getContext('2d'), {
           type: 'pie',
-          data: { labels, datasets: [{ data: values, backgroundColor: colors.slice(0, labels.length), borderColor: '#fff', borderWidth: 2 }] },
-          options: { responsive: true, maintainAspectRatio: true, plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 10 } } }, tooltip: { callbacks: { label: (ctx) => `RM ${formatMoney(ctx.raw)}` } } } }
+          data: {
+            labels: labels,
+            datasets: [{
+              data: values,
+              backgroundColor: backgroundColor,
+              borderColor: '#fff',
+              borderWidth: 2
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+              legend: { display: false },
+              tooltip: {
+                callbacks: {
+                  label: (ctx) => `RM ${formatMoney(ctx.raw)}`
+                }
+              }
+            }
+          }
         });
       }
+
+      // 统计卡片
       document.getElementById('totalItems').textContent = data.length;
       document.getElementById('activeItems').textContent = data.filter(i => i.stockLevel > 0).length;
       document.getElementById('lowStockCount').textContent = data.filter(i => (i.stockLevel||0) < 5).length;
       document.getElementById('totalQty').textContent = data.reduce((s,i)=> s + (i.stockLevel||0), 0).toLocaleString();
+
+      // 低库存列表
       const lowList = data.filter(i => (i.stockLevel||0) < 5).sort((a,b)=> a.stockLevel - b.stockLevel).slice(0,10);
-      document.getElementById('lowStockTable').innerHTML = lowList.length ? lowList.map(i=>`<tr><td>${escHtml(i.name)}</td><td>${i.stockLevel}</td></tr>`).join('') : '<tr><td colspan="2" style="color:#aaa;">No low stock items</td></tr>';
+      document.getElementById('lowStockTable').innerHTML = lowList.length
+        ? lowList.map(i=>`<tr><td>${escHtml(i.name)}</td><td>${i.stockLevel}</td></tr>`).join('')
+        : '<tr><td colspan="2" style="color:#aaa;">No low stock items</td></tr>';
+
+      // 高价值物品（Top Items）
       const topList = data.filter(i => i.onHandCost > 0).sort((a,b)=> b.onHandCost - a.onHandCost).slice(0,5);
-      document.getElementById('topItemsTable').innerHTML = topList.length ? topList.map(i=>`<tr><td>${escHtml(i.name)}</td><td>RM ${formatMoney(i.onHandCost)}</td></tr>`).join('') : '<tr><td colspan="2" style="color:#aaa;">No data</td></tr>';
+      document.getElementById('topItemsTable').innerHTML = topList.length
+        ? topList.map(i=>`<tr><td>${escHtml(i.name)}</td><td>${i.stockLevel}</td><td>RM ${formatMoney(i.onHandCost)}</td></tr>`).join('')
+        : '<tr><td colspan="3" style="color:#aaa;">No data</td></tr>';
     }
 
-    // Inventory Page
     function renderInventoryPage() {
       const data = loadData();
       const searchTerm = document.getElementById('invSearchInput').value.trim().toLowerCase();
       const groupFilter = document.getElementById('invGroupFilter').value;
       const marginPercent = parseFloat(document.getElementById('invMarginInput').value) || 0;
+
       let filtered = data;
       if (groupFilter !== 'all') filtered = filtered.filter(i => (i.productGroup || 'Uncategorized') === groupFilter);
       if (searchTerm) filtered = filtered.filter(i => (i.name && i.name.toLowerCase().includes(searchTerm)) || (i.id && i.id.toLowerCase().includes(searchTerm)));
-      const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
+
+      const totalPages = Math.ceil(filtered.length / currentPageSize);
       if (currentPage > totalPages) currentPage = totalPages || 1;
-      const start = (currentPage - 1) * PAGE_SIZE;
-      const pageItems = filtered.slice(start, start + PAGE_SIZE);
+      const start = (currentPage - 1) * currentPageSize;
+      const pageItems = filtered.slice(start, start + currentPageSize);
+
       const tbody = document.getElementById('invTableBody');
       tbody.innerHTML = '';
       if (pageItems.length === 0) {
@@ -407,6 +501,7 @@
         });
       }
       document.getElementById('invLastUpdated').textContent = 'Last updated: ' + formatDateTime(getLastUploadTime());
+
       const pagination = document.getElementById('invPagination');
       pagination.innerHTML = '';
       for (let p=1; p<=totalPages; p++) {
@@ -416,11 +511,17 @@
         btn.onclick = () => { currentPage = p; renderInventoryPage(); };
         pagination.appendChild(btn);
       }
+
       const groups = [...new Set(data.map(i => i.productGroup || 'Uncategorized'))].sort();
       document.getElementById('invGroupFilter').innerHTML = '<option value="all">All Groups</option>' + groups.map(g => `<option value="${escHtml(g)}" ${g===groupFilter?'selected':''}>${escHtml(g)}</option>`).join('');
     }
 
-    // Excel 上传
+    function changePageSize() {
+      currentPageSize = parseInt(document.getElementById('invPageSize').value);
+      currentPage = 1;
+      renderInventoryPage();
+    }
+
     function handleFile() {
       const fileInput = document.getElementById('fileInput');
       const file = fileInput.files[0];
@@ -502,7 +603,7 @@
       document.getElementById('overlay').classList.remove('show');
     });
 
-    // ========== 计算器逻辑 (原 v6.6 隔离) ==========
+    // ========== 计算器完整逻辑 (v6.6) ==========
     (function() {
       const langMap = {
         cn: {
@@ -928,11 +1029,9 @@
         updateDateTime();
       }
 
-      // 暴露给全局，页面加载时调用
       window.initCalculator = initCalc;
     })();
 
-    // 初始化仪表板与计算器
     window.addEventListener('DOMContentLoaded', () => {
       document.getElementById('invMarginInput').value = getMargin();
       renderDashboard();
