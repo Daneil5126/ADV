@@ -203,7 +203,7 @@
         </section>
         <section class="page" id="page-inventory">
             <div class="header"><h2>📦 Full Inventory</h2></div>
-            <div class="card"><div class="search-bar"><input type="text" id="invSearchInput" placeholder="🔍 Search Name or ID..."><select id="invGroupFilter"><option value="all">All Groups</option></select><select id="invPageSize"><option value="20">20 rows</option><option value="50">50 rows</option><option value="100">100 rows</option><option value="150">150 rows</option></select><select id="sortColumnSelect"><option value="-1">Sort by...</option><option value="0">Name</option><option value="1">ID</option><option value="2">Location</option><option value="3">Available</option><option value="4">Unit Cost</option><option value="5">Landing Cost</option><option value="6">Min Sell Price</option><option value="7">Sales Qty</option><option value="8">Restock Qty</option><option value="9">No Move Days</option></select><select id="sortDirectionSelect"><option value="asc">Ascending</option><option value="desc">Descending</option></select><span class="last-updated" id="invLastUpdated">Last updated: N/A</span></div><div class="margin-bar"><label>Margin % <input type="number" id="invMarginInput" value="0" step="0.01" min="0"></label><span class="last-updated" id="inventoryCountLabel">0 items</span></div><div style="overflow-x:auto;"><table class="full-table" id="invTable"><thead id="invTableHead"><tr><th data-col="0">Name <span class="sort-arrow"></span></th><th data-col="1">ID <span class="sort-arrow"></span></th><th data-col="2">Location <span class="sort-arrow"></span></th><th data-col="3" class="numeric">Available <span class="sort-arrow"></span></th><th data-col="4" class="amount">Unit Cost (RM) <span class="sort-arrow"></span></th><th data-col="5" class="amount">Landing Cost (RM) <span class="sort-arrow"></span></th><th data-col="6" class="amount">Min Sell Price (RM) <span class="sort-arrow"></span></th><th data-col="7" class="numeric">Sales Qty <span class="sort-arrow"></span></th><th data-col="8" class="numeric">Restock Qty <span class="sort-arrow"></span></th><th data-col="9" class="numeric">No Move Days <span class="sort-arrow"></span></th></tr></thead><tbody id="invTableBody"></tbody></table></div><div class="pagination" id="invPagination"></div></div>
+            <div class="card"><div class="search-bar"><input type="text" id="invSearchInput" placeholder="🔍 Search Name or ID..."><select id="invGroupFilter"><option value="all">All Groups</option></select><select id="invPageSize"><option value="20">20 rows</option><option value="50">50 rows</option><option value="100">100 rows</option><option value="150">150 rows</option></select><select id="sortColumnSelect"><option value="-1">Sort by...</option><option value="0">Name</option><option value="1">ID</option><option value="2">Location</option><option value="3">Available</option><option value="4">Unit Cost</option><option value="5">Landing Cost</option><option value="6">Min Sell Price</option><option value="7">Sales Qty</option><option value="8">Restock Qty</option><option value="9">No Move Days</option></select><select id="sortDirectionSelect"><option value="asc">Ascending</option><option value="desc">Descending</option></select><span class="last-updated" id="invLastUpdated">Last updated: N/A</span><span class="last-updated" id="invFileName" style="margin-left:8px;"></span></div><div class="margin-bar"><label>Margin % <input type="number" id="invMarginInput" value="0" step="0.01" min="0"></label><span class="last-updated" id="inventoryCountLabel">0 items</span></div><div style="overflow-x:auto;"><table class="full-table" id="invTable"><thead id="invTableHead"><tr><th data-col="0">Name <span class="sort-arrow"></span></th><th data-col="1">ID <span class="sort-arrow"></span></th><th data-col="2">Location <span class="sort-arrow"></span></th><th data-col="3" class="numeric">Available <span class="sort-arrow"></span></th><th data-col="4" class="amount">Unit Cost (RM) <span class="sort-arrow"></span></th><th data-col="5" class="amount">Landing Cost (RM) <span class="sort-arrow"></span></th><th data-col="6" class="amount">Min Sell Price (RM) <span class="sort-arrow"></span></th><th data-col="7" class="numeric">Sales Qty <span class="sort-arrow"></span></th><th data-col="8" class="numeric">Restock Qty <span class="sort-arrow"></span></th><th data-col="9" class="numeric">No Move Days <span class="sort-arrow"></span></th></tr></thead><tbody id="invTableBody"></tbody></table></div><div class="pagination" id="invPagination"></div></div>
         </section>
         <section class="page placeholder" id="page-sales"><h2>🛒 Sales</h2><p>Coming soon...</p></section>
         <section class="page placeholder" id="page-purchases"><h2>📦 Purchases</h2><p>Coming soon...</p></section>
@@ -216,7 +216,7 @@
     <script>
     (function() {
         'use strict';
-        const STORAGE = { inventory: 'inv_data', lastUpload: 'inv_last_upload', margin: 'inv_margin', changeReport: 'inv_change_report', sidebarOpen: 'app_sidebar_open' };
+        const STORAGE = { inventory: 'inv_data', lastUpload: 'inv_last_upload', margin: 'inv_margin', changeReport: 'inv_change_report', sidebarOpen: 'app_sidebar_open', lastFileName: 'inv_last_filename' };
         const LOW_STOCK_THRESHOLD = 5;
         const LANDING_SST = 0.95;
         const LANDING_FREIGHT = 0.97;
@@ -413,7 +413,7 @@
             if(report.noMovement.length) body.innerHTML += `<div class="change-section"><h4>⏸️ No Movement (${report.noMovement.length})</h4>${createTable(report.noMovement, ['Name','ID','Stock Level'])}</div>`;
         }
 
-        // 库存表格
+        // 库存表格（包含文件名显示）
         function renderInventoryPage() {
             const data = getInventory();
             const search = ($('#invSearchInput').value||'').trim().toLowerCase();
@@ -455,6 +455,8 @@
                 </tr>`;
             }).join('') : '<tr><td colspan="10">No items found</td></tr>';
             $('#invLastUpdated').textContent = `Last updated: ${localStorage.getItem(STORAGE.lastUpload) ? new Date(localStorage.getItem(STORAGE.lastUpload)).toLocaleString() : 'N/A'}`;
+            // 显示上传的文件名
+            $('#invFileName').textContent = localStorage.getItem(STORAGE.lastFileName) || '';
             $('#inventoryCountLabel').textContent = `${filtered.length.toLocaleString()} item${filtered.length===1?'':'s'}`;
             renderPagination(totalPages);
             updateSortIndicators();
@@ -484,7 +486,7 @@
             $('#sortDirectionSelect').value = state.sortDirection;
         }
 
-        // Excel 上传处理
+        // Excel 上传处理（保存文件名）
         async function handleFile(file) {
             if(!file) return;
             try {
@@ -526,7 +528,9 @@
                 saveInventory(newItems);
                 generateChangeReport(oldData, newItems);
                 localStorage.setItem(STORAGE.lastUpload, new Date().toISOString());
-                setStatus(`✅ Loaded ${newItems.length} items from "${wb.SheetNames[0]}"`);
+                // 存储上传的文件名
+                localStorage.setItem(STORAGE.lastFileName, file.name);
+                setStatus(`✅ Loaded ${newItems.length} items from "${file.name}"`);
                 state.currentPage = 1;
                 renderDashboard();
                 if($('#page-inventory').classList.contains('active')) renderInventoryPage();
@@ -638,7 +642,7 @@
             $('#uploadBtn').addEventListener('click', () => $('#fileInput').click());
             $('#fileInput').addEventListener('change', (e) => handleFile(e.target.files[0]));
             $('#exportBtn').addEventListener('click', exportToExcel);
-            $('#clearInventoryBtn').addEventListener('click', () => { if(!confirm('Clear all inventory data?')) return; localStorage.removeItem(STORAGE.inventory); localStorage.removeItem(STORAGE.changeReport); localStorage.removeItem(STORAGE.lastUpload); setStatus('Data cleared'); renderDashboard(); renderInventoryPage(); });
+            $('#clearInventoryBtn').addEventListener('click', () => { if(!confirm('Clear all inventory data?')) return; localStorage.removeItem(STORAGE.inventory); localStorage.removeItem(STORAGE.changeReport); localStorage.removeItem(STORAGE.lastUpload); localStorage.removeItem(STORAGE.lastFileName); setStatus('Data cleared'); renderDashboard(); renderInventoryPage(); });
             $('#invSearchInput').addEventListener('input', () => { state.currentPage=1; renderInventoryPage(); });
             $('#invGroupFilter').addEventListener('change', () => { state.currentPage=1; renderInventoryPage(); });
             $('#invPageSize').addEventListener('change', e => { state.pageSize=+e.target.value; state.currentPage=1; renderInventoryPage(); });
