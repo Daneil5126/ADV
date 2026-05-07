@@ -151,61 +151,34 @@
             .main-content { margin-left: 0; padding: 28px 20px 28px 72px; transition: margin-left 0.25s ease, padding-left 0.25s ease; }
             body.sidebar-expanded .main-content { margin-left: 240px; padding-left: 20px; padding-top: 28px; }
         }
-        @media (max-width: 900px) {
-            .grid-3col { grid-template-columns: 1fr; }
-            .summary-group-card { flex-direction: column-reverse; }
-            .chart-wrap { width: 130px; height: 130px; margin: 0 auto; }
-        }
-        @media (max-width: 768px) {
-            .stats-row { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
-            .search-bar, .margin-bar { align-items: stretch; flex-direction: column; }
-            .search-bar input, .search-bar select, .margin-bar label { width: 100%; }
-            .button-row, .button-row button { width: 100%; }
-        }
-        @media (max-width: 550px) {
-            .input-label { width: 100%; }
-            .input-row, .manual-rate-row, .plus-area { align-items: stretch; flex-direction: column; }
-            .plus-area { width: 100%; border-radius: 22px; }
-            .plus-input, .manual-rate-input { width: 100%; }
-            .final-cost, .gp-card, .result-line { align-items: flex-start; flex-direction: column; }
-        }
+        @media (max-width: 900px) { .grid-3col { grid-template-columns: 1fr; } .summary-group-card { flex-direction: column-reverse; } .chart-wrap { width: 130px; height: 130px; margin: 0 auto; } }
+        @media (max-width: 768px) { .stats-row { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; } .search-bar, .margin-bar { align-items: stretch; flex-direction: column; } .search-bar input, .search-bar select, .margin-bar label { width: 100%; } .button-row, .button-row button { width: 100%; } }
+        @media (max-width: 550px) { .input-label { width: 100%; } .input-row, .manual-rate-row, .plus-area { align-items: stretch; flex-direction: column; } .plus-area { width: 100%; border-radius: 22px; } .plus-input, .manual-rate-input { width: 100%; } .final-cost, .gp-card, .result-line { align-items: flex-start; flex-direction: column; } }
     </style>
 </head>
 <body>
-    <!-- 菜单按钮 -->
-    <button class="menu-toggle" id="menuToggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="sidebar">☰</button>
+    <button class="menu-toggle" id="menuToggle" type="button" aria-label="Open menu">☰</button>
     <div class="overlay" id="overlay" aria-hidden="true"></div>
-
-    <aside class="sidebar" id="sidebar" aria-label="Main navigation">
+    <aside class="sidebar" id="sidebar">
         <div class="logo">
             <button class="sidebar-hide-btn" id="sidebarHideBtn" type="button" aria-label="Hide menu">✕</button>
             <span class="logo-title">⚡ Function</span>
         </div>
         <nav>
-            <a class="active" href="#dashboard" data-page="dashboard">📊 Dashboard</a>
-            <a href="#calculator" data-page="calculator">📱 Calculator</a>
-            <a href="#inventory" data-page="inventory">📦 Inventory</a>
-            <a href="#sales" data-page="sales">🛒 Sales</a>
-            <a href="#purchases" data-page="purchases">📦 Purchases</a>
-            <a href="#integrations" data-page="integrations">🔗 Integrations</a>
-            <a href="#channels" data-page="channels">📡 Active Channels</a>
-            <a href="#reports" data-page="reports">📄 Reports</a>
-            <a href="#documents" data-page="documents">📁 Documents</a>
+            <a class="active" data-page="dashboard">📊 Dashboard</a>
+            <a data-page="calculator">📱 Calculator</a>
+            <a data-page="inventory">📦 Inventory</a>
+            <a data-page="sales">🛒 Sales</a>
+            <a data-page="purchases">📦 Purchases</a>
+            <a data-page="integrations">🔗 Integrations</a>
+            <a data-page="channels">📡 Active Channels</a>
+            <a data-page="reports">📄 Reports</a>
+            <a data-page="documents">📁 Documents</a>
         </nav>
     </aside>
-
     <main class="main-content">
-        <!-- Dashboard Page -->
         <section class="page active" id="page-dashboard">
-            <div class="header">
-                <h2>📊 Dashboard</h2>
-                <div class="button-row">
-                    <input type="file" id="fileInput" accept=".xlsx,.xls" hidden>
-                    <button class="btn btn-primary" id="uploadBtn">📤 Upload Excel</button>
-                    <button class="btn btn-success" id="exportBtn">📥 Export</button>
-                    <button class="btn btn-muted" id="clearInventoryBtn">Clear Data</button>
-                </div>
-            </div>
+            <div class="header"><h2>📊 Dashboard</h2><div class="button-row"><input type="file" id="fileInput" accept=".xlsx,.xls" hidden><button class="btn btn-primary" id="uploadBtn">📤 Upload Excel</button><button class="btn btn-success" id="exportBtn">📥 Export</button><button class="btn btn-muted" id="clearInventoryBtn">Clear Data</button></div></div>
             <div id="statusMsg" class="status-msg" role="status"></div>
             <div class="stats-row">
                 <div class="stat-card"><div class="label">Date / Time</div><div class="value" id="liveDateTime">--</div></div>
@@ -217,151 +190,21 @@
                 <div class="stat-card"><div class="label">Aging &gt;30 Days</div><div class="value" id="agingStockCount">0</div></div>
             </div>
             <div class="grid-3col">
-                <div class="card">
-                    <h3>📊 By Group</h3>
-                    <div class="summary-group-card">
-                        <div class="summary-table-wrap">
-                            <table class="group-table" id="groupSummaryTable">
-                                <thead><tr><th>Group</th><th class="numeric">Qty</th><th class="amount">Cost</th></tr></thead>
-                                <tbody></tbody>
-                            </table>
-                        </div>
-                        <div class="chart-wrap">
-                            <canvas id="pieChart"></canvas>
-                            <div class="chart-fallback" id="chartFallback">Chart unavailable</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="card">
-                    <h3>⚠️ Low Stock</h3>
-                    <table class="mini-table">
-                        <thead><tr><th>Name</th><th class="numeric">Stock</th><th class="amount">Cost</th></tr></thead>
-                        <tbody id="lowStockTable"></tbody>
-                    </table>
-                </div>
-                <div class="card">
-                    <h3>🏆 Top Items</h3>
-                    <table class="mini-table">
-                        <thead><tr><th>Name</th><th class="numeric">Qty</th><th class="amount">Cost</th></tr></thead>
-                        <tbody id="topItemsTable"></tbody>
-                    </table>
-                </div>
+                <div class="card"><h3>📊 By Group</h3><div class="summary-group-card"><div class="summary-table-wrap"><table class="group-table" id="groupSummaryTable"><thead><tr><th>Group</th><th class="numeric">Qty</th><th class="amount">Cost</th></tr></thead><tbody></tbody></table></div><div class="chart-wrap"><canvas id="pieChart"></canvas><div class="chart-fallback" id="chartFallback">Chart unavailable</div></div></div></div>
+                <div class="card"><h3>⚠️ Low Stock</h3><table class="mini-table"><thead><tr><th>Name</th><th class="numeric">Stock</th><th class="amount">Cost</th></tr></thead><tbody id="lowStockTable"></tbody></table></div>
+                <div class="card"><h3>🏆 Top Items</h3><table class="mini-table"><thead><tr><th>Name</th><th class="numeric">Qty</th><th class="amount">Cost</th></tr></thead><tbody id="topItemsTable"></tbody></table></div>
             </div>
             <div class="change-report" id="changeReportContainer"></div>
             <div class="app-credit">Created by DANEIL G.CS</div>
         </section>
-
-        <!-- Calculator Page -->
         <section class="page" id="page-calculator">
             <div class="header"><h2>📱 Calculator</h2></div>
-            <div class="calculator">
-                <div class="calc-header">
-                    <div><span class="calc-title">Product Calculator</span><span class="calc-version"> v6.6 (Base Stable)</span></div>
-                    <div class="calc-datetime" id="calcDatetime">--</div>
-                    <div class="lang-switch">
-                        <button class="lang-btn active" data-lang="en">EN</button>
-                        <button class="lang-btn" data-lang="cn">中文</button>
-                    </div>
-                </div>
-                <div class="rate-panel">
-                    <div class="rate-card">
-                        <div class="rate-label" id="liveLabel">USD/MYR Base Rate</div>
-                        <div class="rate-number" id="liveRateValue">--</div>
-                        <div class="rate-date" id="liveDate">--</div>
-                        <div class="source-badge" id="sourceHint">--</div>
-                    </div>
-                    <div class="plus-area">
-                        <span id="plusLabel">➕ Markup</span>
-                        <input type="text" id="markupInput" class="plus-input" inputmode="decimal" value="0.00">
-                        <button class="refresh-btn" id="refreshBtn">🔄 Refresh Rate</button>
-                    </div>
-                </div>
-                <div class="manual-rate-row">
-                    <span id="manualLabel">✏️ Manual Rate (MYR/USD)</span>
-                    <input type="text" id="manualRateInput" class="manual-rate-input" inputmode="decimal" placeholder="e.g. 4.0465">
-                    <button id="applyManualBtn" class="apply-manual-btn">📌 Apply & Save</button>
-                    <button id="resetAutoBtn" class="reset-auto-btn">🔄 Reset to Auto</button>
-                    <span class="manual-note" id="manualNote">Overrides auto-fetch, works offline</span>
-                </div>
-                <div class="applied-rate-row">
-                    <span class="applied-label" id="appliedRateLabel">💱 Final Rate (Base+Markup) :</span>
-                    <span class="applied-value" id="appliedRateValue">0.0000</span>
-                </div>
-                <div class="formula-banner"><span id="formulaLabel">📐 Formula: </span><code id="formulaCode">Landing Cost = FOB ÷ SST × Rate ÷ Freight ÷ GP</code></div>
-                <div class="input-row"><span class="input-label" id="fobLabel">💰 FOB (USD)</span><input type="text" id="fobInput" class="input-field smart-number-input" inputmode="decimal" value="0"></div>
-                <div class="input-row"><span class="input-label" id="sstLabel">🧾 SST/VAT Tax</span><div class="radio-group" id="sstGroup"><label><input type="radio" name="sst" value="0.95" checked> <span id="sstOpt1">0.95 (5%)</span></label><label><input type="radio" name="sst" value="0.90"> <span id="sstOpt2">0.90 (10%)</span></label></div></div>
-                <div class="input-row"><span class="input-label" id="freightLabel">🚢 Freight (Divisor)</span><input type="text" id="calcFreightInput" class="input-field" inputmode="decimal" value="0.97"><div class="small-hint" id="freightHint">Cost increase ≈ 3.09%</div></div>
-                <div class="input-row"><span class="input-label" id="gpLabel">📈 GP% Divisor</span><input type="text" id="calcGpInput" class="input-field" inputmode="decimal" value="0.97"><div class="small-hint" id="gpHint">Gross margin ≈ 3.09%</div></div>
-                <div class="input-row"><span class="input-label" id="priceLabel">🏷️ Selling Price (MYR)</span><input type="text" id="sellingPrice" class="input-field smart-number-input" inputmode="decimal" value="0"></div>
-                <div class="result-card">
-                    <div class="result-line"><span id="step1Label">FOB ÷ SST (USD) :</span><span id="step1Val">$0.00</span></div>
-                    <div class="result-line"><span id="step2Label">× Rate :</span><span id="step2Val">0.00 MYR</span></div>
-                    <div class="result-line"><span id="step3Label">÷ Freight :</span><span id="step3Val">0.00 MYR</span></div>
-                </div>
-                <div class="final-cost"><span id="landingLabel">📦 Landing Cost (Ceil)</span><span id="landingVal" class="final-number">0.00 MYR</span></div>
-                <div id="gpCard" class="gp-card"><span id="gpLabelText">📊 Gross Margin (based on price)</span><div style="display:flex; align-items:center;"><span id="gpPercent" class="gp-value">0.00%</span><span id="warningIcon" class="badge">⚠️ LOSS</span></div></div>
-                <div class="result-line" style="background:transparent; padding:8px 0; border:none;"><span id="profitLabel">💵 Gross Profit :</span><span id="profitAmount">0.00 MYR</span></div>
-                <button id="clearBtn" class="action-btn">🗑️ <span id="clearText">Clear All</span></button>
-                <div id="errorMsg" class="error-msg"></div>
-                <div class="footer">
-                    <div id="versionInfoCalc">💡 Tip: Rate auto-saves</div>
-                    <div class="powered">Powered By Daneil.G.CS | Base Stable v6.6</div>
-                </div>
-            </div>
+            <div class="calculator"><div class="calc-header"><div><span class="calc-title">Product Calculator</span><span class="calc-version"> v6.6 (Base Stable)</span></div><div class="calc-datetime" id="calcDatetime">--</div><div class="lang-switch"><button class="lang-btn active" data-lang="en">EN</button><button class="lang-btn" data-lang="cn">中文</button></div></div><div class="rate-panel"><div class="rate-card"><div class="rate-label" id="liveLabel">USD/MYR Base Rate</div><div class="rate-number" id="liveRateValue">--</div><div class="rate-date" id="liveDate">--</div><div class="source-badge" id="sourceHint">--</div></div><div class="plus-area"><span id="plusLabel">➕ Markup</span><input type="text" id="markupInput" class="plus-input" inputmode="decimal" value="0.00"><button class="refresh-btn" id="refreshBtn">🔄 Refresh Rate</button></div></div><div class="manual-rate-row"><span id="manualLabel">✏️ Manual Rate (MYR/USD)</span><input type="text" id="manualRateInput" class="manual-rate-input" inputmode="decimal" placeholder="e.g. 4.0465"><button id="applyManualBtn" class="apply-manual-btn">📌 Apply & Save</button><button id="resetAutoBtn" class="reset-auto-btn">🔄 Reset to Auto</button><span class="manual-note" id="manualNote">Overrides auto-fetch, works offline</span></div><div class="applied-rate-row"><span class="applied-label" id="appliedRateLabel">💱 Final Rate (Base+Markup) :</span><span class="applied-value" id="appliedRateValue">0.0000</span></div><div class="formula-banner"><span id="formulaLabel">📐 Formula: </span><code id="formulaCode">Landing Cost = FOB ÷ SST × Rate ÷ Freight ÷ GP</code></div><div class="input-row"><span class="input-label" id="fobLabel">💰 FOB (USD)</span><input type="text" id="fobInput" class="input-field smart-number-input" inputmode="decimal" value="0"></div><div class="input-row"><span class="input-label" id="sstLabel">🧾 SST/VAT Tax</span><div class="radio-group" id="sstGroup"><label><input type="radio" name="sst" value="0.95" checked> <span id="sstOpt1">0.95 (5%)</span></label><label><input type="radio" name="sst" value="0.90"> <span id="sstOpt2">0.90 (10%)</span></label></div></div><div class="input-row"><span class="input-label" id="freightLabel">🚢 Freight (Divisor)</span><input type="text" id="calcFreightInput" class="input-field" inputmode="decimal" value="0.97"><div class="small-hint" id="freightHint">Cost increase ≈ 3.09%</div></div><div class="input-row"><span class="input-label" id="gpLabel">📈 GP% Divisor</span><input type="text" id="calcGpInput" class="input-field" inputmode="decimal" value="0.97"><div class="small-hint" id="gpHint">Gross margin ≈ 3.09%</div></div><div class="input-row"><span class="input-label" id="priceLabel">🏷️ Selling Price (MYR)</span><input type="text" id="sellingPrice" class="input-field smart-number-input" inputmode="decimal" value="0"></div><div class="result-card"><div class="result-line"><span id="step1Label">FOB ÷ SST (USD) :</span><span id="step1Val">$0.00</span></div><div class="result-line"><span id="step2Label">× Rate :</span><span id="step2Val">0.00 MYR</span></div><div class="result-line"><span id="step3Label">÷ Freight :</span><span id="step3Val">0.00 MYR</span></div></div><div class="final-cost"><span id="landingLabel">📦 Landing Cost (Ceil)</span><span id="landingVal" class="final-number">0.00 MYR</span></div><div id="gpCard" class="gp-card"><span id="gpLabelText">📊 Gross Margin (based on price)</span><div style="display:flex; align-items:center;"><span id="gpPercent" class="gp-value">0.00%</span><span id="warningIcon" class="badge">⚠️ LOSS</span></div></div><div class="result-line" style="background:transparent; padding:8px 0; border:none;"><span id="profitLabel">💵 Gross Profit :</span><span id="profitAmount">0.00 MYR</span></div><button id="clearBtn" class="action-btn">🗑️ <span id="clearText">Clear All</span></button><div id="errorMsg" class="error-msg"></div><div class="footer"><div id="versionInfoCalc">💡 Tip: Rate auto-saves</div><div class="powered">Powered By Daneil.G.CS | Base Stable v6.6</div></div></div>
         </section>
-
-        <!-- Inventory Page -->
         <section class="page" id="page-inventory">
             <div class="header"><h2>📦 Full Inventory</h2></div>
-            <div class="card">
-                <div class="search-bar">
-                    <input type="text" id="invSearchInput" placeholder="🔍 Search Name or ID...">
-                    <select id="invGroupFilter"><option value="all">All Groups</option></select>
-                    <select id="invPageSize"><option value="20">20 rows</option><option value="50">50 rows</option><option value="100">100 rows</option><option value="150">150 rows</option></select>
-                    <select id="sortColumnSelect">
-                        <option value="-1">Sort by...</option>
-                        <option value="0">Name</option>
-                        <option value="1">ID</option>
-                        <option value="2">Location</option>
-                        <option value="3">Available</option>
-                        <option value="4">Unit Cost</option>
-                        <option value="5">Landing Cost</option>
-                        <option value="6">Min Sell Price</option>
-                        <option value="7">Sales Qty</option>
-                        <option value="8">Restock Qty</option>
-                        <option value="9">No Move Days</option>
-                    </select>
-                    <select id="sortDirectionSelect"><option value="asc">Ascending</option><option value="desc">Descending</option></select>
-                    <span class="last-updated" id="invLastUpdated">Last updated: N/A</span>
-                </div>
-                <div class="margin-bar">
-                    <label>Margin % <input type="number" id="invMarginInput" value="0" step="0.01" min="0"></label>
-                    <span class="last-updated" id="inventoryCountLabel">0 items</span>
-                </div>
-                <div style="overflow-x:auto;">
-                    <table class="full-table" id="invTable">
-                        <thead id="invTableHead">
-                            <tr>
-                                <th data-col="0">Name <span class="sort-arrow"></span></th>
-                                <th data-col="1">ID <span class="sort-arrow"></span></th>
-                                <th data-col="2">Location <span class="sort-arrow"></span></th>
-                                <th data-col="3" class="numeric">Available <span class="sort-arrow"></span></th>
-                                <th data-col="4" class="amount">Unit Cost (RM) <span class="sort-arrow"></span></th>
-                                <th data-col="5" class="amount">Landing Cost (RM) <span class="sort-arrow"></span></th>
-                                <th data-col="6" class="amount">Min Sell Price (RM) <span class="sort-arrow"></span></th>
-                                <th data-col="7" class="numeric">Sales Qty <span class="sort-arrow"></span></th>
-                                <th data-col="8" class="numeric">Restock Qty <span class="sort-arrow"></span></th>
-                                <th data-col="9" class="numeric">No Move Days <span class="sort-arrow"></span></th>
-                            </tr>
-                        </thead>
-                        <tbody id="invTableBody"></tbody>
-                    </table>
-                </div>
-                <div class="pagination" id="invPagination"></div>
-            </div>
+            <div class="card"><div class="search-bar"><input type="text" id="invSearchInput" placeholder="🔍 Search Name or ID..."><select id="invGroupFilter"><option value="all">All Groups</option></select><select id="invPageSize"><option value="20">20 rows</option><option value="50">50 rows</option><option value="100">100 rows</option><option value="150">150 rows</option></select><select id="sortColumnSelect"><option value="-1">Sort by...</option><option value="0">Name</option><option value="1">ID</option><option value="2">Location</option><option value="3">Available</option><option value="4">Unit Cost</option><option value="5">Landing Cost</option><option value="6">Min Sell Price</option><option value="7">Sales Qty</option><option value="8">Restock Qty</option><option value="9">No Move Days</option></select><select id="sortDirectionSelect"><option value="asc">Ascending</option><option value="desc">Descending</option></select><span class="last-updated" id="invLastUpdated">Last updated: N/A</span></div><div class="margin-bar"><label>Margin % <input type="number" id="invMarginInput" value="0" step="0.01" min="0"></label><span class="last-updated" id="inventoryCountLabel">0 items</span></div><div style="overflow-x:auto;"><table class="full-table" id="invTable"><thead id="invTableHead"><tr><th data-col="0">Name <span class="sort-arrow"></span></th><th data-col="1">ID <span class="sort-arrow"></span></th><th data-col="2">Location <span class="sort-arrow"></span></th><th data-col="3" class="numeric">Available <span class="sort-arrow"></span></th><th data-col="4" class="amount">Unit Cost (RM) <span class="sort-arrow"></span></th><th data-col="5" class="amount">Landing Cost (RM) <span class="sort-arrow"></span></th><th data-col="6" class="amount">Min Sell Price (RM) <span class="sort-arrow"></span></th><th data-col="7" class="numeric">Sales Qty <span class="sort-arrow"></span></th><th data-col="8" class="numeric">Restock Qty <span class="sort-arrow"></span></th><th data-col="9" class="numeric">No Move Days <span class="sort-arrow"></span></th></tr></thead><tbody id="invTableBody"></tbody></table></div><div class="pagination" id="invPagination"></div></div>
         </section>
-
-        <!-- Placeholder Pages -->
         <section class="page placeholder" id="page-sales"><h2>🛒 Sales</h2><p>Coming soon...</p></section>
         <section class="page placeholder" id="page-purchases"><h2>📦 Purchases</h2><p>Coming soon...</p></section>
         <section class="page placeholder" id="page-integrations"><h2>🔗 Integrations</h2><p>Coming soon...</p></section>
@@ -373,36 +216,23 @@
     <script>
     (function() {
         'use strict';
-        const STORAGE = {
-            inventory: 'inv_data',
-            lastUpload: 'inv_last_upload',
-            margin: 'inv_margin',
-            changeReport: 'inv_change_report',
-            sidebarOpen: 'app_sidebar_open'
-        };
+        const STORAGE = { inventory: 'inv_data', lastUpload: 'inv_last_upload', margin: 'inv_margin', changeReport: 'inv_change_report', sidebarOpen: 'app_sidebar_open' };
         const LOW_STOCK_THRESHOLD = 5;
         const LANDING_SST = 0.95;
         const LANDING_FREIGHT = 0.97;
         const INITIAL_PAGE_SIZE = 20;
-        const state = {
-            currentPage: 1,
-            pageSize: INITIAL_PAGE_SIZE,
-            sortColumn: -1,
-            sortDirection: 'asc',
-            pieChart: null,
-            clockTimer: null
-        };
-        const $ = (selector, root = document) => root.querySelector(selector);
-        const $$ = (selector, root = document) => Array.from(root.querySelectorAll(selector));
+        const state = { currentPage: 1, pageSize: INITIAL_PAGE_SIZE, sortColumn: -1, sortDirection: 'asc', pieChart: null, clockTimer: null };
+        const $ = (s, r = document) => r.querySelector(s);
+        const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
         const moneyFormatter = new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-        function escHtml(value) { return String(value ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
-        function toNumber(value, fallback = 0) { if (typeof value === 'number') return Number.isFinite(value) ? value : fallback; const parsed = Number.parseFloat(String(value ?? '').replace(/,/g, '').trim()); return Number.isFinite(parsed) ? parsed : fallback; }
-        function toInteger(value, fallback = 0) { const parsed = Number.parseInt(String(value ?? '').replace(/,/g, '').trim(), 10); return Number.isFinite(parsed) ? parsed : fallback; }
-        function formatMoney(value) { return moneyFormatter.format(toNumber(value)); }
-        function getJson(key, fallback) { try { const raw = localStorage.getItem(key); return raw ? JSON.parse(raw) : fallback; } catch (error) { console.warn('Storage read', error); return fallback; } }
-        function setJson(key, value) { try { localStorage.setItem(key, JSON.stringify(value)); return true; } catch (error) { console.error('Storage write', error); return false; } }
-        function getInventory() { const data = getJson(STORAGE.inventory, []); return Array.isArray(data) ? data.map(normalizeItem) : []; }
-        function saveInventory(items) { return setJson(STORAGE.inventory, items.map(normalizeItem)); }
+        const escHtml = v => String(v ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+        const toNumber = (v, f=0) => { if(typeof v==='number') return isFinite(v)?v:f; const p = parseFloat(String(v??'').replace(/,/g,'').trim()); return isFinite(p)?p:f; };
+        const toInteger = (v, f=0) => { const p = parseInt(String(v??'').replace(/,/g,'').trim(),10); return isFinite(p)?p:f; };
+        const formatMoney = v => moneyFormatter.format(toNumber(v));
+        const getJson = (k, fallback) => { try { const raw = localStorage.getItem(k); return raw ? JSON.parse(raw) : fallback; } catch(e) { return fallback; } };
+        const setJson = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); return true; } catch(e) { return false; } };
+        const getInventory = () => { const d = getJson(STORAGE.inventory, []); return Array.isArray(d) ? d.map(normalizeItem) : []; };
+        const saveInventory = items => setJson(STORAGE.inventory, items.map(normalizeItem));
         function normalizeItem(item) {
             return {
                 id: String(item?.id ?? '').trim(),
@@ -423,270 +253,381 @@
                 firstSeenSheet: String(item?.firstSeenSheet ?? '').trim()
             };
         }
-        function getMargin() { return toNumber(localStorage.getItem(STORAGE.margin), 0); }
-        function saveMargin(value) { localStorage.setItem(STORAGE.margin, String(toNumber(value, 0))); }
-        function calculateLandingCost(unitCost) { return toNumber(unitCost) / LANDING_SST / LANDING_FREIGHT; }
-        function calculateMinSell(unitCost, marginPercent) { return calculateLandingCost(unitCost) * (1 + toNumber(marginPercent) / 100); }
-        function getInventoryValue(item) { return item.onHandCost || (item.unitCost * item.stockLevel); }
-        function formatTime12h() { const now = new Date(); const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']; let hour = now.getHours(); const ampm = hour >= 12 ? 'PM' : 'AM'; hour = hour % 12 || 12; return `${now.getDate()} ${months[now.getMonth()]} ${now.getFullYear()} ${hour}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')} ${ampm}`; }
-        function setStatus(message) { const el = $('#statusMsg'); if (el) el.textContent = message || ''; }
+        const getMargin = () => toNumber(localStorage.getItem(STORAGE.margin), 0);
+        const saveMargin = v => localStorage.setItem(STORAGE.margin, String(toNumber(v,0)));
+        const calculateLandingCost = uc => toNumber(uc) / LANDING_SST / LANDING_FREIGHT;
+        const calculateMinSell = (uc, mp) => calculateLandingCost(uc) * (1 + toNumber(mp)/100);
+        const getInventoryValue = item => item.onHandCost || (item.unitCost * item.stockLevel);
+        const formatTime12h = () => { const now = new Date(); const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']; let h = now.getHours(); const ampm = h>=12?'PM':'AM'; h = h%12||12; return `${now.getDate()} ${months[now.getMonth()]} ${now.getFullYear()} ${h}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')} ${ampm}`; };
+        const setStatus = msg => { const el = $('#statusMsg'); if(el) el.textContent = msg || ''; };
 
-        // 侧边栏控制
+        // 导航与菜单
         function initNavigation() {
-            const sidebar = document.getElementById('sidebar');
-            const overlay = document.getElementById('overlay');
-            const menuToggle = document.getElementById('menuToggle');
-            const sidebarHideBtn = document.getElementById('sidebarHideBtn');
-            const desktopQuery = window.matchMedia('(min-width: 1100px)');
-
-            function isDesktop() { return desktopQuery.matches; }
-
-            function setSidebarOpen(isOpen, persist = true) {
-                sidebar.classList.toggle('open', isOpen);
-                document.body.classList.toggle('sidebar-expanded', isOpen);
-                overlay.classList.toggle('show', isOpen && !isDesktop());
-                menuToggle.setAttribute('aria-expanded', String(isOpen));
-                menuToggle.setAttribute('aria-label', isOpen ? 'Close menu' : 'Open menu');
-                sidebarHideBtn.setAttribute('aria-label', isOpen ? 'Close menu' : 'Open menu');
-                if (persist && isDesktop()) localStorage.setItem(STORAGE.sidebarOpen, isOpen ? 'true' : 'false');
-            }
-
-            menuToggle.addEventListener('click', () => setSidebarOpen(!sidebar.classList.contains('open')));
-            sidebarHideBtn.addEventListener('click', () => setSidebarOpen(false));
-            overlay.addEventListener('click', () => setSidebarOpen(false));
-
-            $$('.sidebar nav a').forEach(link => {
-                link.addEventListener('click', (event) => {
-                    event.preventDefault();
-                    if (!isDesktop()) setSidebarOpen(false);
-                    switchPage(link.dataset.page);
-                });
-            });
-
-            setSidebarOpen(isDesktop() ? localStorage.getItem(STORAGE.sidebarOpen) !== 'false' : false, false);
-            desktopQuery.addEventListener('change', () => {
-                setSidebarOpen(isDesktop() ? localStorage.getItem(STORAGE.sidebarOpen) !== 'false' : false, false);
-            });
-
-            const hashPage = location.hash.replace('#', '');
-            if (hashPage && document.getElementById(`page-${hashPage}`)) switchPage(hashPage);
+            const sb = document.getElementById('sidebar'), ov = document.getElementById('overlay'), mt = document.getElementById('menuToggle'), shb = document.getElementById('sidebarHideBtn');
+            const dq = window.matchMedia('(min-width: 1100px)');
+            const isDesktop = () => dq.matches;
+            const setOpen = (open, persist=true) => {
+                sb.classList.toggle('open', open);
+                document.body.classList.toggle('sidebar-expanded', open);
+                ov.classList.toggle('show', open && !isDesktop());
+                mt.setAttribute('aria-expanded', String(open));
+                mt.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+                shb.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+                if(persist && isDesktop()) localStorage.setItem(STORAGE.sidebarOpen, open ? 'true' : 'false');
+            };
+            mt.addEventListener('click', () => setOpen(!sb.classList.contains('open')));
+            shb.addEventListener('click', () => setOpen(false));
+            ov.addEventListener('click', () => setOpen(false));
+            $$('.sidebar nav a').forEach(a => a.addEventListener('click', e => { e.preventDefault(); if(!isDesktop()) setOpen(false); switchPage(a.dataset.page); }));
+            setOpen(isDesktop() ? localStorage.getItem(STORAGE.sidebarOpen) !== 'false' : false, false);
+            dq.addEventListener('change', () => setOpen(isDesktop() ? localStorage.getItem(STORAGE.sidebarOpen) !== 'false' : false, false));
+            const hash = location.hash.replace('#','');
+            if(hash && document.getElementById(`page-${hash}`)) switchPage(hash);
         }
-
         function switchPage(pageName) {
             $$('.page').forEach(p => p.classList.remove('active'));
             const target = document.getElementById(`page-${pageName}`);
-            if (target) target.classList.add('active');
-            $$('.sidebar nav a').forEach(link => link.classList.toggle('active', link.dataset.page === pageName));
+            if(target) target.classList.add('active');
+            $$('.sidebar nav a').forEach(a => a.classList.toggle('active', a.dataset.page === pageName));
             history.replaceState(null, '', `#${pageName}`);
-            if (pageName === 'dashboard') renderDashboard();
-            if (pageName === 'inventory') renderInventoryPage();
+            if(pageName === 'dashboard') renderDashboard();
+            if(pageName === 'inventory') renderInventoryPage();
         }
 
         // 仪表板渲染
         function renderDashboard() {
             const data = getInventory();
             const groupCost = new Map(), groupQty = new Map();
-            data.forEach(item => {
-                const g = item.productGroup || 'Uncategorized';
-                groupCost.set(g, (groupCost.get(g) || 0) + getInventoryValue(item));
-                groupQty.set(g, (groupQty.get(g) || 0) + item.stockLevel);
-            });
-            const sortedGroups = Array.from(groupCost.entries()).sort((a,b) => b[1] - a[1]);
-            const colors = getGroupColors(sortedGroups.map(([group]) => group));
-            const grandTotal = sortedGroups.reduce((sum, [,cost]) => sum + cost, 0);
-            const groupBody = $('#groupSummaryTable tbody');
-            groupBody.innerHTML = '';
-            sortedGroups.forEach(([group, cost], i) => {
-                const row = document.createElement('tr');
-                row.innerHTML = `<td><span style="display:inline-block;width:10px;height:10px;border-radius:3px;background:${colors[i]};margin-right:6px;"></span>${escHtml(group)}</td><td class="numeric">${(groupQty.get(group)||0).toLocaleString()}</td><td class="amount">RM ${formatMoney(cost)}</td>`;
-                groupBody.appendChild(row);
+            data.forEach(i => { const g = i.productGroup || 'Uncategorized'; groupCost.set(g, (groupCost.get(g)||0) + getInventoryValue(i)); groupQty.set(g, (groupQty.get(g)||0) + i.stockLevel); });
+            const sorted = Array.from(groupCost.entries()).sort((a,b) => b[1]-a[1]);
+            const colors = getGroupColors(sorted.map(([g]) => g));
+            const grandTotal = sorted.reduce((s,[,c]) => s+c, 0);
+            const tbody = $('#groupSummaryTable tbody');
+            tbody.innerHTML = '';
+            sorted.forEach(([g,c], i) => {
+                const q = groupQty.get(g)||0;
+                const tr = document.createElement('tr');
+                tr.innerHTML = `<td><span style="display:inline-block;width:10px;height:10px;border-radius:3px;background:${colors[i]};margin-right:6px;"></span>${escHtml(g)}</td><td class="numeric">${q.toLocaleString()}</td><td class="amount">RM ${formatMoney(c)}</td>`;
+                tbody.appendChild(tr);
             });
             $('#totalSku').textContent = data.length.toLocaleString();
-            $('#totalQty').textContent = data.reduce((sum, item) => sum + item.stockLevel, 0).toLocaleString();
+            $('#totalQty').textContent = data.reduce((s,i) => s + i.stockLevel, 0).toLocaleString();
             $('#totalRevenue').textContent = `RM ${formatMoney(grandTotal)}`;
-            $('#lowStockCount').textContent = data.filter((item) => item.stockLevel < LOW_STOCK_THRESHOLD).length.toLocaleString();
-            $('#salesQtyLatest').textContent = data.reduce((sum, item) => sum + (item.salesQty || 0), 0).toLocaleString();
-            $('#agingStockCount').textContent = data.filter((item) => item.stockLevel > 0 && (item.daysNoMovement || 0) >= 30).length.toLocaleString();
+            $('#lowStockCount').textContent = data.filter(i => i.stockLevel < LOW_STOCK_THRESHOLD).length.toLocaleString();
+            $('#salesQtyLatest').textContent = data.reduce((s,i) => s + (i.salesQty||0), 0).toLocaleString();
+            $('#agingStockCount').textContent = data.filter(i => i.stockLevel > 0 && (i.daysNoMovement||0) >= 30).length.toLocaleString();
             $('#liveDateTime').textContent = formatTime12h();
-            renderPieChart(sortedGroups, colors);
-            renderMiniTable('#lowStockTable', data.filter(i => i.stockLevel < LOW_STOCK_THRESHOLD).sort((a,b) => a.stockLevel - b.stockLevel).slice(0,10), ['name','stockLevel','onHandCost'], 'No low stock');
-            renderMiniTable('#topItemsTable', data.filter(i => getInventoryValue(i) > 0).sort((a,b) => getInventoryValue(b) - getInventoryValue(a)).slice(0,10), ['name','stockLevel','onHandCost'], 'No data');
+            renderPieChart(sorted, colors);
+            renderMiniTable('#lowStockTable', data.filter(i => i.stockLevel < LOW_STOCK_THRESHOLD).sort((a,b)=>a.stockLevel-b.stockLevel).slice(0,10), ['name','stockLevel','onHandCost'], 'No low stock');
+            renderMiniTable('#topItemsTable', data.filter(i => getInventoryValue(i)>0).sort((a,b)=>getInventoryValue(b)-getInventoryValue(a)).slice(0,10), ['name','stockLevel','onHandCost'], 'No data');
             renderChangeReport();
         }
         function getGroupColors(labels) {
             const fixed = { ASUS:'#2563eb', AOC:'#dc2626', Gigabyte:'#16a34a', AMD:'#f59e0b', MSI:'#9333ea', PROMETHEAN:'#0d9488', RICOH:'#ea580c', LG:'#64748b', 'POWER COLOR':'#334155' };
             const fallback = ['#0f766e','#7c3aed','#be123c','#0369a1','#65a30d','#ca8a04','#475569','#c2410c'];
-            let fallbackIdx = 0;
-            return labels.map(l => fixed[l] || fallback[fallbackIdx++ % fallback.length]);
+            let idx = 0;
+            return labels.map(l => fixed[l] || fallback[idx++ % fallback.length]);
         }
-        function renderPieChart(sortedGroups, colors) {
-            const canvas = $('#pieChart');
-            const fallback = $('#chartFallback');
-            if (state.pieChart) { state.pieChart.destroy(); state.pieChart = null; }
-            if (!sortedGroups.length) { canvas.style.display = 'none'; fallback.style.display = 'none'; return; }
-            if (!window.Chart) { canvas.style.display = 'none'; fallback.style.display = 'block'; return; }
-            canvas.style.display = 'block';
-            fallback.style.display = 'none';
+        function renderPieChart(sorted, colors) {
+            const canvas = $('#pieChart'), fallback = $('#chartFallback');
+            if(state.pieChart) { state.pieChart.destroy(); state.pieChart = null; }
+            if(!sorted.length) { canvas.style.display = 'none'; fallback.style.display = 'none'; return; }
+            if(!window.Chart) { canvas.style.display = 'none'; fallback.style.display = 'block'; return; }
+            canvas.style.display = 'block'; fallback.style.display = 'none';
             state.pieChart = new Chart(canvas.getContext('2d'), {
                 type: 'pie',
-                data: { labels: sortedGroups.map(([l]) => l), datasets: [{ data: sortedGroups.map(([,v]) => v), backgroundColor: colors, borderColor: '#fff', borderWidth: 2 }] },
+                data: { labels: sorted.map(([l])=>l), datasets: [{ data: sorted.map(([,v])=>v), backgroundColor: colors, borderColor: '#fff', borderWidth: 2 }] },
                 options: { responsive: true, maintainAspectRatio: true, plugins: { legend: { display: false } } }
             });
         }
-        function renderMiniTable(selector, items, keys, emptyText) {
+        function renderMiniTable(selector, items, keys, empty) {
             const body = $(selector);
-            if (!items.length) { body.innerHTML = `<tr><td colspan="${keys.length}">${escHtml(emptyText)}</td></tr>`; return; }
-            body.innerHTML = items.map(item => {
-                const cells = keys.map(key => {
-                    if (key === 'name') return `<td>${escHtml(item.name)}</td>`;
-                    if (key === 'stockLevel') return `<td class="numeric">${item.stockLevel.toLocaleString()}</td>`;
-                    if (key === 'onHandCost') return `<td class="amount">RM ${formatMoney(getInventoryValue(item))}</td>`;
-                    return `<td>${escHtml(item[key])}</td>`;
-                }).join('');
-                return `<tr>${cells}</tr>`;
-            }).join('');
+            if(!items.length) { body.innerHTML = `<tr><td colspan="${keys.length}">${escHtml(empty)}</td></tr>`; return; }
+            body.innerHTML = items.map(item => `<tr>${keys.map(k => {
+                if(k==='name') return `<td>${escHtml(item.name)}</td>`;
+                if(k==='stockLevel') return `<td class="numeric">${item.stockLevel.toLocaleString()}</td>`;
+                if(k==='onHandCost') return `<td class="amount">RM ${formatMoney(getInventoryValue(item))}</td>`;
+                return `<td>${escHtml(item[k])}</td>`;
+            }).join('')}</tr>`).join('');
         }
 
         // 变动报告
         function generateChangeReport(oldData, newData) {
-            if (!oldData.length) { localStorage.removeItem(STORAGE.changeReport); return null; }
+            if(!oldData.length) { localStorage.removeItem(STORAGE.changeReport); return null; }
             const report = { newSkus:[], discontinuedSkus:[], salesVelocity:[], noMovement:[], restocked:[] };
             const oldMap = new Map(oldData.map(i => [i.id, i]));
             const newMap = new Map(newData.map(i => [i.id, i]));
-            newData.forEach(item => {
-                const oldItem = oldMap.get(item.id);
-                if (!oldItem) { report.newSkus.push(item); return; }
-                const oldStock = oldItem.stockLevel || 0, newStock = item.stockLevel || 0;
-                if (newStock < oldStock) report.salesVelocity.push({ ...item, oldStock, change: oldStock - newStock });
-                else if (newStock > oldStock) report.restocked.push({ ...item, oldStock, change: newStock - oldStock });
-                else report.noMovement.push(item);
+            newData.forEach(i => {
+                const old = oldMap.get(i.id);
+                if(!old) { report.newSkus.push(i); return; }
+                const oldS = old.stockLevel||0, newS = i.stockLevel||0;
+                if(newS < oldS) report.salesVelocity.push({...i, oldStock: oldS, change: oldS - newS});
+                else if(newS > oldS) report.restocked.push({...i, oldStock: oldS, change: newS - oldS});
+                else report.noMovement.push(i);
             });
-            oldData.forEach(item => { if (!newMap.has(item.id)) report.discontinuedSkus.push(item); });
-            report.salesVelocity.sort((a,b) => b.change - a.change);
-            report.restocked.sort((a,b) => b.change - a.change);
+            oldData.forEach(i => { if(!newMap.has(i.id)) report.discontinuedSkus.push(i); });
+            report.salesVelocity.sort((a,b)=>b.change-a.change);
+            report.restocked.sort((a,b)=>b.change-a.change);
             setJson(STORAGE.changeReport, report);
             return report;
         }
         function renderChangeReport() {
-            const container = $('#changeReportContainer');
             const report = getJson(STORAGE.changeReport, null);
-            if (!report) {
-                container.innerHTML = '<div class="change-card"><h3>📈 Inventory Change Report (No previous data)</h3></div>';
-                return;
-            }
-            const summaryParts = [];
-            if(report.newSkus.length) summaryParts.push(`${report.newSkus.length} new`);
-            if(report.discontinuedSkus.length) summaryParts.push(`${report.discontinuedSkus.length} discontinued`);
-            if(report.salesVelocity.length) summaryParts.push(`${report.salesVelocity.length} selling`);
-            if(report.noMovement.length) summaryParts.push(`${report.noMovement.length} no movement`);
-            if(report.restocked.length) summaryParts.push(`${report.restocked.length} restocked`);
-            const summaryText = summaryParts.join(', ');
-            container.innerHTML = `
-                <div class="change-card" id="changeCard">
-                    <h3 onclick="document.getElementById('changeCard').classList.toggle('open')">
-                        📈 Inventory Change Report <span class="arrow">▶</span>
-                        <span style="font-size:0.7rem; color:#888;">${summaryText}</span>
-                    </h3>
-                    <div class="change-body" id="changeBody"></div>
-                </div>
-            `;
+            const container = $('#changeReportContainer');
+            if(!report) { container.innerHTML = '<div class="change-card"><h3>📈 Inventory Change Report (No previous data)</h3></div>'; return; }
+            const parts = [];
+            if(report.newSkus.length) parts.push(`${report.newSkus.length} new`);
+            if(report.discontinuedSkus.length) parts.push(`${report.discontinuedSkus.length} discontinued`);
+            if(report.salesVelocity.length) parts.push(`${report.salesVelocity.length} selling`);
+            if(report.noMovement.length) parts.push(`${report.noMovement.length} no movement`);
+            if(report.restocked.length) parts.push(`${report.restocked.length} restocked`);
+            container.innerHTML = `<div class="change-card" id="changeCard"><h3 onclick="this.parentElement.classList.toggle('open')">📈 Inventory Change Report <span class="arrow">▶</span> <span style="font-size:0.7rem;color:#888;">${parts.join(', ')}</span></h3><div class="change-body" id="changeBody"></div></div>`;
             const body = $('#changeBody');
-            function createTable(items, columns, maxRows=10) {
-                const sliced = items.slice(0, maxRows);
+            function createTable(items, cols, max=10) {
+                const sliced = items.slice(0,max);
                 let html = '<table class="change-table"><thead><tr>';
-                columns.forEach(col => html += `<th>${col}</th>`);
+                cols.forEach(c => html += `<th>${c}</th>`);
                 html += '</tr></thead><tbody>';
                 sliced.forEach(item => {
                     html += '<tr>';
-                    columns.forEach(col => {
+                    cols.forEach(c => {
                         let val = '';
-                        if (col === 'Name') val = escHtml(item.name);
-                        else if (col === 'ID') val = escHtml(item.id);
-                        else if (col === 'Stock Level') val = item.stockLevel || 0;
-                        else if (col === 'Change') val = (item.change > 0 ? '+' : '') + item.change;
-                        else if (col === 'Old Stock') val = item.oldStock;
-                        else val = item[col] || '';
+                        if(c==='Name') val = escHtml(item.name);
+                        else if(c==='ID') val = escHtml(item.id);
+                        else if(c==='Stock Level') val = item.stockLevel||0;
+                        else if(c==='Change') val = `${item.change>0?'+':''}${item.change}`;
+                        else if(c==='Old Stock') val = item.oldStock;
+                        else val = item[c]||'';
                         html += `<td>${val}</td>`;
                     });
                     html += '</tr>';
                 });
-                if(items.length > maxRows) html += `<tr><td colspan="${columns.length}" style="color:#aaa;">... and ${items.length - maxRows} more</td></tr>`;
+                if(items.length>max) html += `<tr><td colspan="${cols.length}" style="color:#aaa;">... and ${items.length-max} more</td></tr>`;
                 html += '</tbody></table>';
                 return html;
             }
             if(report.newSkus.length) body.innerHTML += `<div class="change-section"><h4>🆕 New SKUs (${report.newSkus.length})</h4>${createTable(report.newSkus, ['Name','ID','Stock Level'])}</div>`;
-            if(report.discontinuedSkus.length) body.innerHTML += `<div class="change-section"><h4>❌ Discontinued SKUs (${report.discontinuedSkus.length})</h4>${createTable(report.discontinuedSkus, ['Name','ID'])}</div>`;
+            if(report.discontinuedSkus.length) body.innerHTML += `<div class="change-section"><h4>❌ Discontinued (${report.discontinuedSkus.length})</h4>${createTable(report.discontinuedSkus, ['Name','ID'])}</div>`;
             if(report.salesVelocity.length) body.innerHTML += `<div class="change-section"><h4>📉 Top Sales Velocity (${report.salesVelocity.length})</h4>${createTable(report.salesVelocity, ['Name','ID','Old Stock','Stock Level','Change'])}</div>`;
             if(report.restocked.length) body.innerHTML += `<div class="change-section"><h4>📈 Restocked (${report.restocked.length})</h4>${createTable(report.restocked, ['Name','ID','Old Stock','Stock Level','Change'])}</div>`;
             if(report.noMovement.length) body.innerHTML += `<div class="change-section"><h4>⏸️ No Movement (${report.noMovement.length})</h4>${createTable(report.noMovement, ['Name','ID','Stock Level'])}</div>`;
         }
 
         // 库存表格
-        function renderInventoryPage() { /* 完整渲染逻辑 */ }
+        function renderInventoryPage() {
+            const data = getInventory();
+            const search = ($('#invSearchInput').value||'').trim().toLowerCase();
+            const group = $('#invGroupFilter').value || 'all';
+            const marginPercent = toNumber($('#invMarginInput').value);
+            let filtered = data;
+            if(group !== 'all') filtered = filtered.filter(i => i.productGroup === group);
+            if(search) filtered = filtered.filter(i => i.name.toLowerCase().includes(search) || i.id.toLowerCase().includes(search));
+            if(state.sortColumn >= 0) {
+                const cols = ['name','id','location','available','unitCost','landingCost','minSellPrice','salesQty','restockQty','daysNoMovement'];
+                const col = cols[state.sortColumn];
+                filtered.sort((a,b) => {
+                    let va = col==='landingCost' ? calculateLandingCost(a.unitCost) : col==='minSellPrice' ? calculateMinSell(a.unitCost, marginPercent) : (a[col]??'');
+                    let vb = col==='landingCost' ? calculateLandingCost(b.unitCost) : col==='minSellPrice' ? calculateMinSell(b.unitCost, marginPercent) : (b[col]??'');
+                    if(typeof va === 'string') va = va.toLowerCase();
+                    if(typeof vb === 'string') vb = vb.toLowerCase();
+                    if(va < vb) return state.sortDirection==='asc' ? -1 : 1;
+                    if(va > vb) return state.sortDirection==='asc' ? 1 : -1;
+                    return 0;
+                });
+            }
+            const totalPages = Math.max(1, Math.ceil(filtered.length / state.pageSize));
+            if(state.currentPage > totalPages) state.currentPage = totalPages;
+            const start = (state.currentPage-1)*state.pageSize;
+            const pageItems = filtered.slice(start, start+state.pageSize);
+            const tbody = $('#invTableBody');
+            tbody.innerHTML = pageItems.length ? pageItems.map(item => {
+                const landing = calculateLandingCost(item.unitCost);
+                const minSell = calculateMinSell(item.unitCost, marginPercent);
+                return `<tr>
+                    <td>${escHtml(item.name)}</td><td>${escHtml(item.id)}</td><td>${escHtml(item.location)}</td>
+                    <td class="numeric">${(item.available??item.stockLevel).toLocaleString()}</td>
+                    <td class="amount">RM ${formatMoney(item.unitCost)}</td>
+                    <td class="amount">RM ${formatMoney(landing)}</td>
+                    <td class="amount">RM ${formatMoney(minSell)}</td>
+                    <td class="numeric">${(item.salesQty||0).toLocaleString()}</td>
+                    <td class="numeric">${(item.restockQty||0).toLocaleString()}</td>
+                    <td class="numeric">${item.daysNoMovement == null ? '-' : item.daysNoMovement.toLocaleString()}</td>
+                </tr>`;
+            }).join('') : '<tr><td colspan="10">No items found</td></tr>';
+            $('#invLastUpdated').textContent = `Last updated: ${localStorage.getItem(STORAGE.lastUpload) ? new Date(localStorage.getItem(STORAGE.lastUpload)).toLocaleString() : 'N/A'}`;
+            $('#inventoryCountLabel').textContent = `${filtered.length.toLocaleString()} item${filtered.length===1?'':'s'}`;
+            renderPagination(totalPages);
+            updateSortIndicators();
+            const groups = [...new Set(data.map(i => i.productGroup))].sort();
+            const sel = $('#invGroupFilter');
+            sel.innerHTML = '<option value="all">All Groups</option>' + groups.map(g => `<option value="${escHtml(g)}">${escHtml(g)}</option>`).join('');
+            sel.value = group;
+        }
+        function renderPagination(total) {
+            const pag = $('#invPagination');
+            pag.innerHTML = '';
+            if(total <= 1) return;
+            for(let i=1; i<=total; i++) {
+                const b = document.createElement('button');
+                b.textContent = i;
+                b.classList.toggle('active', i === state.currentPage);
+                b.addEventListener('click', () => { state.currentPage = i; renderInventoryPage(); });
+                pag.appendChild(b);
+            }
+        }
+        function updateSortIndicators() {
+            $$('#invTableHead th').forEach(th => {
+                const arrow = $('.sort-arrow', th);
+                if(arrow) arrow.textContent = (+th.dataset.col === state.sortColumn) ? (state.sortDirection==='asc'?'▲':'▼') : '';
+            });
+            $('#sortColumnSelect').value = String(state.sortColumn);
+            $('#sortDirectionSelect').value = state.sortDirection;
+        }
 
-        // 文件上传处理
+        // Excel 上传处理
         async function handleFile(file) {
-            if (!file) return;
+            if(!file) return;
             try {
-                const oldInventory = getInventory();
+                const oldData = getInventory();
                 const buffer = await file.arrayBuffer();
-                if (!window.XLSX) throw new Error('XLSX library not loaded');
-                const workbook = XLSX.read(new Uint8Array(buffer), { type: 'array' });
-                if (!workbook.SheetNames.length) throw new Error('No sheets found');
-                const sheetName = workbook.SheetNames[0];
-                const sheet = workbook.Sheets[sheetName];
+                if(!window.XLSX) throw new Error('XLSX library not loaded');
+                const wb = XLSX.read(new Uint8Array(buffer), { type: 'array' });
+                const sheet = wb.Sheets[wb.SheetNames[0]];
                 const rows = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: '' });
-                if (rows.length < 2) throw new Error('File is empty');
-                const headers = rows[0].map(h => String(h).trim());
+                if(rows.length < 2) throw new Error('File is empty');
+                const headers = rows[0].map(h => String(h).trim().toLowerCase());
                 const idx = {
-                    id: headers.findIndex(h => ['item code','itemcode','sku'].includes(h.toLowerCase())),
-                    name: headers.findIndex(h => ['description','name','item description'].includes(h.toLowerCase())),
-                    qty: headers.findIndex(h => ['qty','quantity','stock'].includes(h.toLowerCase())),
-                    cost: headers.findIndex(h => ['average balance cost','avg cost','average cost','unit cost'].includes(h.toLowerCase())),
-                    group: headers.findIndex(h => ['product group','group'].includes(h.toLowerCase())),
-                    onHand: headers.findIndex(h => ['on hand cost','stock value'].includes(h.toLowerCase())),
-                    location: headers.findIndex(h => ['location','warehouse'].includes(h.toLowerCase())),
-                    available: headers.findIndex(h => ['available'].includes(h.toLowerCase()))
+                    id: headers.findIndex(h => h==='item code'||h==='itemcode'||h==='sku'),
+                    name: headers.findIndex(h => h==='description'||h==='name'||h==='item description'),
+                    qty: headers.findIndex(h => h==='qty'||h==='quantity'||h==='stock'),
+                    cost: headers.findIndex(h => h==='average balance cost'||h==='avg cost'||h==='average cost'||h==='unit cost'),
+                    group: headers.findIndex(h => h==='product group'||h==='group'),
+                    onHand: headers.findIndex(h => h==='on hand cost'||h==='stock value'),
+                    location: headers.findIndex(h => h==='location'||h==='warehouse'),
+                    available: headers.findIndex(h => h==='available')
                 };
-                if (idx.id < 0 || idx.name < 0 || idx.qty < 0 || idx.cost < 0) throw new Error('Missing required columns: Item Code, Description, QTY, Average Balance Cost');
+                if(idx.id<0||idx.name<0||idx.qty<0||idx.cost<0) throw new Error('Missing required columns: Item Code, Description, QTY, Average Balance Cost');
                 const newItems = [];
-                for (let i = 1; i < rows.length; i++) {
-                    const row = rows[i];
-                    const id = String(row[idx.id] ?? '').trim();
-                    if (!id) continue;
+                for(let i=1; i<rows.length; i++) {
+                    const r = rows[i];
+                    const id = String(r[idx.id]??'').trim();
+                    if(!id) continue;
                     newItems.push(normalizeItem({
                         id,
-                        name: row[idx.name],
-                        stockLevel: parseInt(row[idx.qty]) || 0,
-                        available: idx.available >= 0 ? parseInt(row[idx.available]) || 0 : undefined,
-                        unitCost: parseFloat(row[idx.cost]) || 0,
-                        productGroup: idx.group >= 0 ? row[idx.group] : 'Uncategorized',
-                        onHandCost: idx.onHand >= 0 ? parseFloat(row[idx.onHand]) || 0 : undefined,
-                        location: idx.location >= 0 ? row[idx.location] : ''
+                        name: r[idx.name],
+                        stockLevel: parseInt(r[idx.qty])||0,
+                        available: idx.available>=0 ? parseInt(r[idx.available])||0 : undefined,
+                        unitCost: parseFloat(r[idx.cost])||0,
+                        productGroup: idx.group>=0 ? r[idx.group] : 'Uncategorized',
+                        onHandCost: idx.onHand>=0 ? parseFloat(r[idx.onHand])||0 : undefined,
+                        location: idx.location>=0 ? r[idx.location] : ''
                     }));
                 }
                 saveInventory(newItems);
-                generateChangeReport(oldInventory, newItems);
+                generateChangeReport(oldData, newItems);
                 localStorage.setItem(STORAGE.lastUpload, new Date().toISOString());
-                setStatus(`✅ Loaded ${newItems.length} items from "${sheetName}"`);
+                setStatus(`✅ Loaded ${newItems.length} items from "${wb.SheetNames[0]}"`);
                 state.currentPage = 1;
                 renderDashboard();
-                if ($('#page-inventory').classList.contains('active')) renderInventoryPage();
-            } catch (err) { setStatus(`❌ ${err.message}`); }
+                if($('#page-inventory').classList.contains('active')) renderInventoryPage();
+            } catch(err) { setStatus(`❌ ${err.message}`); }
         }
 
-        function exportToExcel() { /* 导出逻辑 */ }
+        // 导出 Excel
+        function exportToExcel() {
+            const data = getInventory();
+            if(!data.length) return alert('No data to export.');
+            if(!window.XLSX) return alert('XLSX library not available.');
+            const mp = toNumber($('#invMarginInput').value);
+            const sheet = [['Name','ID','Location','Available','Unit Cost (RM)','Landing Cost (RM)','Min Sell Price (RM)','Sales Qty','Restock Qty','No Move Days']];
+            data.forEach(i => {
+                sheet.push([i.name, i.id, i.location, i.available??i.stockLevel,
+                    i.unitCost.toFixed(2), calculateLandingCost(i.unitCost).toFixed(2), calculateMinSell(i.unitCost, mp).toFixed(2),
+                    i.salesQty||0, i.restockQty||0, i.daysNoMovement??'']);
+            });
+            const ws = XLSX.utils.aoa_to_sheet(sheet);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'Inventory');
+            XLSX.writeFile(wb, `inventory_${new Date().toISOString().slice(0,10)}.xlsx`);
+        }
 
-        // 计算器 v6.6
+        // 计算器 v6.6 (完整保留)
         (function() {
             const langMap = {
-                cn: { /* 中文翻译 */ },
-                en: { /* 英文翻译 */ }
+                en: { mainTitle:'Product Calculator', versionText:' v6.6 (Base Stable)', liveLabel:'USD/MYR Base Rate', plusLabel:'➕ Markup',
+                    appliedRateLabel:'💱 Final Rate (Base+Markup) :', formulaLabel:'📐 Formula: ', formulaCode:'Landing Cost = FOB ÷ SST × Rate ÷ Freight ÷ GP',
+                    fobLabel:'💰 FOB (USD)', sstLabel:'🧾 SST/VAT Tax', sstOpt1:'0.95 (5%)', sstOpt2:'0.90 (10%)',
+                    freightLabel:'🚢 Freight (Divisor)', gpLabel:'📈 GP% Divisor', priceLabel:'🏷️ Selling Price (MYR)',
+                    step1Label:'FOB ÷ SST (USD) :', step2Label:'× Rate :', step3Label:'÷ Freight :', landingLabel:'📦 Landing Cost (Ceil)',
+                    gpLabelText:'📊 Gross Margin (based on price)', profitLabel:'💵 Gross Profit :', clearText:'Clear All',
+                    errorGp:'❌ GP divisor cannot be 0 or negative', errorFreight:'❌ Freight divisor cannot be 0 or negative',
+                    errorDiv:'❌ Divisor cannot be zero', errorRate:'❌ Applied rate invalid (≤0)', fetchErr:'⚠️ Network failed, using stored rate',
+                    clearOk:'✅ Cleared', loading:'Loading...', datePrefix:'📅 ', marketRate:'Live rate', cacheMsg:'📦 Using stored rate',
+                    refreshBtn:'🔄 Refresh Rate', freightHintPrefix:'Cost increase ≈ ', gpHintPrefix:'Gross margin ≈ ', percent:'%',
+                    manualLabel:'✏️ Manual Rate (MYR/USD)', manualNote:'Overrides auto-fetch, works offline',
+                    applyManual:'📌 Apply & Save', resetAuto:'🔄 Reset to Auto', sourceManual:'✏️ Manual',
+                    versionInfoCalc:'💡 Tip: Rate auto-saves', poweredByCalc:'Powered By Daneil.G.CS | Base Stable v6.6',
+                    confirmRefresh:'Manual mode is active. Refreshing will override your manual rate. Continue?' },
+                cn: { /* 中文翻译 */ }
             };
-            let curLang = localStorage.getItem('calcLang') || 'en';
-            function t(key) { return langMap[curLang][key] || key; }
-            // ... 完整计算器逻辑，之前已验证
-            window.initCalculator = function() { /* 初始化 */ };
+            let curLang = localStorage.getItem('calcLang')||'en';
+            const t = k => langMap[curLang][k] || k;
+            const fob = document.getElementById('fobInput'), freight = document.getElementById('calcFreightInput'), gp = document.getElementById('calcGpInput'),
+                sell = document.getElementById('sellingPrice'), markup = document.getElementById('markupInput'), refreshBtn = document.getElementById('refreshBtn'),
+                clearBtn = document.getElementById('clearBtn'), radios = document.querySelectorAll('input[name="sst"]'),
+                liveRate = document.getElementById('liveRateValue'), liveDate = document.getElementById('liveDate'), appliedRate = document.getElementById('appliedRateValue'),
+                step1 = document.getElementById('step1Val'), step2 = document.getElementById('step2Val'), step3 = document.getElementById('step3Val'),
+                landing = document.getElementById('landingVal'), gpPercent = document.getElementById('gpPercent'), profit = document.getElementById('profitAmount'),
+                gpCard = document.getElementById('gpCard'), warn = document.getElementById('warningIcon'), errorDiv = document.getElementById('errorMsg'),
+                datetime = document.getElementById('calcDatetime'), sourceHint = document.getElementById('sourceHint'),
+                freightHint = document.getElementById('freightHint'), gpHint = document.getElementById('gpHint'),
+                manualRate = document.getElementById('manualRateInput'), applyManual = document.getElementById('applyManualBtn'), resetAuto = document.getElementById('resetAutoBtn');
+            let baseRate = 3.97, lastErr = '', autoTimer = null;
+            const smartNum = n => { if(isNaN(n)) return '0'; if(n===0) return '0'; if(Number.isInteger(n)) return n.toString(); return n.toFixed(6).replace(/\.?0+$/,''); };
+            const parseMoney = s => { const n = Number(String(s).replace(/,/g,'')); return isFinite(n)?n:0; };
+            const setupSmart = el => { el.addEventListener('blur', function(){ this.value = smartNum(Math.max(0,parseMoney(this.value))); compute(); }); el.addEventListener('focus', function(){ if(this.value==='0'||this.value==='0.00') this.select(); }); el.addEventListener('input', compute); };
+            const loadRate = () => { const m = localStorage.getItem('manualBaseRate'); if(m&&!isNaN(parseFloat(m))){ baseRate=parseFloat(m); sourceHint.textContent=t('sourceManual'); return true; } const c = localStorage.getItem('cachedBaseRate'); if(c&&!isNaN(parseFloat(c))){ baseRate=parseFloat(c); sourceHint.textContent=t('cacheMsg'); return true; } baseRate=3.97; sourceHint.textContent=t('cacheMsg'); return false; };
+            const saveRate = (r, isM=false) => { if(isM){ localStorage.setItem('manualBaseRate', r.toFixed(4)); localStorage.removeItem('cachedBaseRate'); } else { if(!localStorage.getItem('manualBaseRate')) localStorage.setItem('cachedBaseRate', r.toFixed(4)); } };
+            const setManual = r => { if(isNaN(r)||r<=0) return false; baseRate=parseFloat(r.toFixed(4)); saveRate(baseRate,true); liveRate.textContent=baseRate.toFixed(4); liveDate.textContent=t('datePrefix')+new Date().toLocaleString(); sourceHint.textContent=t('sourceManual'); updateApplied(); compute(); return true; };
+            const resetManual = async () => { localStorage.removeItem('manualBaseRate'); loadRate(); await refreshRate(); manualRate.value=''; };
+            const updateDT = () => { const now=new Date(); const opts={year:'numeric',month:'short',day:'numeric',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:true}; datetime.textContent=now.toLocaleString(curLang==='cn'?'zh-CN':'en-US',opts); };
+            const updateHints = () => { const f=parseFloat(freight.value)||0, g=parseFloat(gp.value)||0; freightHint.textContent=f>0?t('freightHintPrefix')+((1/f-1)*100).toFixed(2)+t('percent'):(curLang==='cn'?'无效':'invalid'); gpHint.textContent=g>0?t('gpHintPrefix')+((1/g-1)*100).toFixed(2)+t('percent'):(curLang==='cn'?'无效':'invalid'); };
+            const updateUI = () => { refreshBtn.textContent=t('refreshBtn'); document.querySelector('#clearBtn span').textContent=t('clearText'); updateHints(); errorDiv.textContent=lastErr||''; updateDT(); };
+            const getSST = () => { for(let r of radios) if(r.checked) return parseFloat(r.value); return 0.95; };
+            const updateApplied = () => { const applied = baseRate + parseMoney(markup.value); appliedRate.textContent = applied.toFixed(4); };
+            const compute = () => {
+                const f = parseMoney(fob.value), sst = getSST(), rate = baseRate + parseMoney(markup.value), fr = parseFloat(freight.value)||0, g = parseFloat(gp.value)||0, p = parseMoney(sell.value);
+                updateApplied();
+                let err = '';
+                if(isNaN(rate)||rate<=0) err = t('errorRate'); else if(fr<=0) err = t('errorFreight'); else if(g<=0) err = t('errorGp'); else if(sst===0) err = t('errorDiv');
+                if(err) { errorDiv.textContent = err; step1.textContent='$0.00'; step2.textContent=step3.textContent='0.00 MYR'; landing.textContent='0.00 MYR'; gpPercent.textContent='0.00%'; profit.textContent='0.00 MYR'; gpCard.classList.remove('negative'); warn.style.display='none'; return; }
+                const s1 = f/sst, s2 = s1*rate, s3 = s2/fr, landRaw = s3/g, land = Math.ceil(Math.max(0,landRaw)*100)/100;
+                step1.textContent = '$'+s1.toFixed(2); step2.textContent = s2.toFixed(2)+' MYR'; step3.textContent = s3.toFixed(2)+' MYR'; landing.textContent = land.toFixed(2)+' MYR';
+                let gross=0, margin=0;
+                if(land>0&&p>0){ gross=p-land; margin=(gross/land)*100; } else if(p>0&&land===0){ gross=p; margin=NaN; } else if(land>0&&p<=0){ gross=-land; margin=-100; }
+                gpPercent.textContent = isNaN(margin)||!isFinite(margin) ? 'N/A' : Math.min(999.99,Math.max(-999.99,margin)).toFixed(2)+'%';
+                profit.textContent = gross.toFixed(2)+' MYR';
+                gpCard.classList.toggle('negative', margin<-0.01); warn.style.display = margin<-0.01?'inline-block':'none';
+                errorDiv.textContent = '';
+            };
+            const clearAll = () => { fob.value='0'; sell.value='0'; freight.value='0.97'; gp.value='0.97'; markup.value='0.00'; compute(); updateHints(); errorDiv.textContent=t('clearOk'); setTimeout(()=>{ if(errorDiv.textContent===t('clearOk')) errorDiv.textContent=''; },2000); };
+            const setLang = l => { curLang=l; localStorage.setItem('calcLang',l); document.querySelectorAll('.lang-btn').forEach(b=>b.classList.toggle('active',b.dataset.lang===l)); updateUI(); compute(); };
+            const fetchRate = async () => {
+                try { const res=await fetch('https://liverate.daneilgoh.workers.dev',{signal:AbortSignal.timeout(8000)}); if(!res.ok) throw new Error(`HTTP ${res.status}`); const data=await res.json(); if(data.success&&data.rate>0){ if(!localStorage.getItem('manualBaseRate')){ baseRate=data.rate; saveRate(baseRate,false); liveRate.textContent=baseRate.toFixed(4); liveDate.textContent=t('datePrefix')+new Date(data.lastUpdated).toLocaleString(); sourceHint.textContent=t('marketRate'); } lastErr=''; return true; } throw new Error(data.error||'Invalid'); } catch(err){ loadRate(); liveRate.textContent=baseRate.toFixed(4); sourceHint.textContent=localStorage.getItem('manualBaseRate')?t('sourceManual'):t('cacheMsg'); lastErr=t('fetchErr'); return false; }
+            };
+            const refreshRate = async () => { await fetchRate(); updateApplied(); compute(); updateHints(); };
+            const refreshAll = async () => { if(localStorage.getItem('manualBaseRate')&&!confirm(t('confirmRefresh'))) return; localStorage.removeItem('manualBaseRate'); await refreshRate(); };
+            setupSmart(fob); setupSmart(sell);
+            freight.addEventListener('input', compute); gp.addEventListener('input', compute); markup.addEventListener('input', ()=>{ updateApplied(); compute(); });
+            radios.forEach(r=>r.addEventListener('change', compute));
+            refreshBtn.addEventListener('click', refreshAll); clearBtn.addEventListener('click', clearAll);
+            applyManual.addEventListener('click', ()=>{ const v=parseFloat(manualRate.value); if(isNaN(v)||v<=0){ alert(curLang==='cn'?'请输入有效的正数汇率':'Please enter a valid positive rate'); return; } setManual(v); manualRate.value=''; });
+            resetAuto.addEventListener('click', resetManual);
+            document.querySelectorAll('.lang-btn').forEach(b=>b.addEventListener('click', ()=>setLang(b.dataset.lang)));
+            loadRate(); setLang(curLang); fetchRate().then(()=>{ compute(); updateHints(); }); updateDT(); setInterval(updateDT,1000);
+            if(autoTimer) clearInterval(autoTimer);
+            autoTimer = setInterval(()=>{ if(![fob,sell,markup,freight,gp,manualRate].includes(document.activeElement)&&!localStorage.getItem('manualBaseRate')) fetchRate().then(compute); }, 10*60*1000);
+            window.initCalculator = function(){};
         })();
 
         // 初始化
@@ -697,20 +638,25 @@
             $('#uploadBtn').addEventListener('click', () => $('#fileInput').click());
             $('#fileInput').addEventListener('change', (e) => handleFile(e.target.files[0]));
             $('#exportBtn').addEventListener('click', exportToExcel);
-            $('#clearInventoryBtn').addEventListener('click', () => {
-                if (!confirm('Clear all inventory data?')) return;
-                localStorage.removeItem(STORAGE.inventory);
-                localStorage.removeItem(STORAGE.changeReport);
-                localStorage.removeItem(STORAGE.lastUpload);
-                setStatus('Data cleared');
-                renderDashboard();
-                renderInventoryPage();
+            $('#clearInventoryBtn').addEventListener('click', () => { if(!confirm('Clear all inventory data?')) return; localStorage.removeItem(STORAGE.inventory); localStorage.removeItem(STORAGE.changeReport); localStorage.removeItem(STORAGE.lastUpload); setStatus('Data cleared'); renderDashboard(); renderInventoryPage(); });
+            $('#invSearchInput').addEventListener('input', () => { state.currentPage=1; renderInventoryPage(); });
+            $('#invGroupFilter').addEventListener('change', () => { state.currentPage=1; renderInventoryPage(); });
+            $('#invPageSize').addEventListener('change', e => { state.pageSize=+e.target.value; state.currentPage=1; renderInventoryPage(); });
+            $('#sortColumnSelect').addEventListener('change', e => { state.sortColumn=+e.target.value; state.currentPage=1; renderInventoryPage(); });
+            $('#sortDirectionSelect').addEventListener('change', e => { state.sortDirection=e.target.value; state.currentPage=1; renderInventoryPage(); });
+            $('#invMarginInput').addEventListener('input', e => { saveMargin(e.target.value); state.currentPage=1; renderInventoryPage(); });
+            $('#invTableHead').addEventListener('click', e => {
+                const th = e.target.closest('th[data-col]');
+                if(!th) return;
+                const col = +th.dataset.col;
+                if(state.sortColumn === col) state.sortDirection = state.sortDirection==='asc'?'desc':'asc';
+                else { state.sortColumn=col; state.sortDirection='asc'; }
+                state.currentPage=1; renderInventoryPage();
             });
-            // 其他事件绑定...
-            state.clockTimer = setInterval(() => { const el = $('#liveDateTime'); if (el) el.textContent = formatTime12h(); }, 1000);
+            state.clockTimer = setInterval(() => { const el = $('#liveDateTime'); if(el) el.textContent = formatTime12h(); }, 1000);
             renderDashboard();
             renderInventoryPage();
-            if (window.initCalculator) window.initCalculator();
+            if(window.initCalculator) window.initCalculator();
         });
     })();
     </script>
