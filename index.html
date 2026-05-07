@@ -216,7 +216,8 @@
     <script>
     (function() {
         'use strict';
-        const STORAGE = { inventory: 'inv_data', lastUpload: 'inv_last_upload', margin: 'inv_margin', changeReport: 'inv_change_report', sidebarOpen: 'app_sidebar_open', lastFileName: 'inv_last_filename' };
+        // 增加 lastSheetName 存储键
+        const STORAGE = { inventory: 'inv_data', lastUpload: 'inv_last_upload', margin: 'inv_margin', changeReport: 'inv_change_report', sidebarOpen: 'app_sidebar_open', lastFileName: 'inv_last_filename', lastSheetName: 'inv_last_sheetname' };
         const LOW_STOCK_THRESHOLD = 5;
         const LANDING_SST = 0.95;
         const LANDING_FREIGHT = 0.97;
@@ -348,7 +349,7 @@
                 if(k==='stockLevel') return `<td class="numeric">${item.stockLevel.toLocaleString()}</td>`;
                 if(k==='onHandCost') return `<td class="amount">RM ${formatMoney(getInventoryValue(item))}</td>`;
                 return `<td>${escHtml(item[k])}</td>`;
-            }).join('')}</tr>`).join('');
+            }).join('')} </tr>`).join('');
         }
 
         // 变动报告
@@ -387,7 +388,7 @@
                 const sliced = items.slice(0,max);
                 let html = '<table class="change-table"><thead><tr>';
                 cols.forEach(c => html += `<th>${c}</th>`);
-                html += '</tr></thead><tbody>';
+                html += '</thead><tbody>';
                 sliced.forEach(item => {
                     html += '<tr>';
                     cols.forEach(c => {
@@ -413,7 +414,7 @@
             if(report.noMovement.length) body.innerHTML += `<div class="change-section"><h4>⏸️ No Movement (${report.noMovement.length})</h4>${createTable(report.noMovement, ['Name','ID','Stock Level'])}</div>`;
         }
 
-        // 库存表格（包含文件名显示）
+        // 库存表格（包含文件名和工作表名称显示）
         function renderInventoryPage() {
             const data = getInventory();
             const search = ($('#invSearchInput').value||'').trim().toLowerCase();
@@ -455,8 +456,18 @@
                 </tr>`;
             }).join('') : '<tr><td colspan="10">No items found</td></tr>';
             $('#invLastUpdated').textContent = `Last updated: ${localStorage.getItem(STORAGE.lastUpload) ? new Date(localStorage.getItem(STORAGE.lastUpload)).toLocaleString() : 'N/A'}`;
-            // 显示上传的文件名
-            $('#invFileName').textContent = localStorage.getItem(STORAGE.lastFileName) || '';
+            
+            // 显示上传的文件名和工作表名称
+            const fileName = localStorage.getItem(STORAGE.lastFileName) || '';
+            const sheetName = localStorage.getItem(STORAGE.lastSheetName) || '';
+            let displayText = '';
+            if (fileName || sheetName) {
+                displayText = `📁 ${fileName}${sheetName ? ` → 📄 ${sheetName}` : ''}`;
+            } else {
+                displayText = '';
+            }
+            $('#invFileName').textContent = displayText;
+            
             $('#inventoryCountLabel').textContent = `${filtered.length.toLocaleString()} item${filtered.length===1?'':'s'}`;
             renderPagination(totalPages);
             updateSortIndicators();
@@ -486,7 +497,7 @@
             $('#sortDirectionSelect').value = state.sortDirection;
         }
 
-        // Excel 上传处理（保存文件名）
+        // Excel 上传处理（保存文件名 + 工作表名称）
         async function handleFile(file) {
             if(!file) return;
             try {
@@ -494,7 +505,9 @@
                 const buffer = await file.arrayBuffer();
                 if(!window.XLSX) throw new Error('XLSX library not loaded');
                 const wb = XLSX.read(new Uint8Array(buffer), { type: 'array' });
-                const sheet = wb.Sheets[wb.SheetNames[0]];
+                // 获取第一个工作表名称
+                const sheetName = wb.SheetNames[0] || 'Sheet1';
+                const sheet = wb.Sheets[sheetName];
                 const rows = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: '' });
                 if(rows.length < 2) throw new Error('File is empty');
                 const headers = rows[0].map(h => String(h).trim().toLowerCase());
@@ -528,9 +541,9 @@
                 saveInventory(newItems);
                 generateChangeReport(oldData, newItems);
                 localStorage.setItem(STORAGE.lastUpload, new Date().toISOString());
-                // 存储上传的文件名
                 localStorage.setItem(STORAGE.lastFileName, file.name);
-                setStatus(`✅ Loaded ${newItems.length} items from "${file.name}"`);
+                localStorage.setItem(STORAGE.lastSheetName, sheetName); // 保存工作表名称
+                setStatus(`✅ Loaded ${newItems.length} items from "${file.name}" (sheet: ${sheetName})`);
                 state.currentPage = 1;
                 renderDashboard();
                 if($('#page-inventory').classList.contains('active')) renderInventoryPage();
@@ -555,7 +568,7 @@
             XLSX.writeFile(wb, `inventory_${new Date().toISOString().slice(0,10)}.xlsx`);
         }
 
-        // 计算器 v6.6 (完整保留)
+        // 计算器 v6.6 (完整保留，未做任何改动)
         (function() {
             const langMap = {
                 en: { mainTitle:'Product Calculator', versionText:' v6.6 (Base Stable)', liveLabel:'USD/MYR Base Rate', plusLabel:'➕ Markup',
@@ -642,7 +655,17 @@
             $('#uploadBtn').addEventListener('click', () => $('#fileInput').click());
             $('#fileInput').addEventListener('change', (e) => handleFile(e.target.files[0]));
             $('#exportBtn').addEventListener('click', exportToExcel);
-            $('#clearInventoryBtn').addEventListener('click', () => { if(!confirm('Clear all inventory data?')) return; localStorage.removeItem(STORAGE.inventory); localStorage.removeItem(STORAGE.changeReport); localStorage.removeItem(STORAGE.lastUpload); localStorage.removeItem(STORAGE.lastFileName); setStatus('Data cleared'); renderDashboard(); renderInventoryPage(); });
+            $('#clearInventoryBtn').addEventListener('click', () => { 
+                if(!confirm('Clear all inventory data?')) return; 
+                localStorage.removeItem(STORAGE.inventory); 
+                localStorage.removeItem(STORAGE.changeReport); 
+                localStorage.removeItem(STORAGE.lastUpload); 
+                localStorage.removeItem(STORAGE.lastFileName);
+                localStorage.removeItem(STORAGE.lastSheetName); // 清除工作表名
+                setStatus('Data cleared'); 
+                renderDashboard(); 
+                renderInventoryPage(); 
+            });
             $('#invSearchInput').addEventListener('input', () => { state.currentPage=1; renderInventoryPage(); });
             $('#invGroupFilter').addEventListener('change', () => { state.currentPage=1; renderInventoryPage(); });
             $('#invPageSize').addEventListener('change', e => { state.pageSize=+e.target.value; state.currentPage=1; renderInventoryPage(); });
