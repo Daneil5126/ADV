@@ -440,7 +440,7 @@
             }
         }
 
-        // ===== RUN RATE ANALYSIS (固定对比 60 天前) =====
+        // ===== RUN RATE ANALYSIS =====
         const MONTH_IDX = {jan:0,feb:1,mar:2,apr:3,may:4,jun:5,jul:6,aug:7,sep:8,oct:9,nov:10,dec:11};
         function parseSheetDate(name) {
             const m = String(name).trim().match(/^(\d{1,2})[- ]([A-Za-z]{3})[- ](\d{4})$/i);
@@ -535,56 +535,91 @@
 
             return { latestKey, key60, days60, items };
         }
-        let _rrFilter='all';
+        let _rrFilter = 'all';
+        let _rrSort = { col: 3, asc: false }; // 默认按 Run Rate 降序
+
         function renderRunRate() {
-            const container=$('#runRateContainer'); if(!container) return;
-            const result=computeRunRates();
-            if(!result||!result.items.length){
-                const allS=getJson(STORAGE.allSheets,{}); const kLen=Object.keys(allS).length;
-                container.innerHTML=`<div class="card" style="padding:14px;color:var(--muted);font-size:0.82rem;">📊 <b>Run Rate Analysis</b> — ${kLen<2?'Upload a multi-sheet Excel (tabs named e.g. "07-May-2026") to unlock sales velocity &amp; aging stock analysis.':`No 60‑day snapshot found — need at least 2 dated sheets.`}</div>`;
+            const container = $('#runRateContainer'); if (!container) return;
+            const result = computeRunRates();
+            if (!result || !result.items.length) {
+                const allS = getJson(STORAGE.allSheets, {}); const kLen = Object.keys(allS).length;
+                container.innerHTML = `<div class="card" style="padding:14px;color:var(--muted);font-size:0.82rem;">📊 <b>Run Rate Analysis</b> — ${kLen < 2 ? 'Upload a multi-sheet Excel (tabs named e.g. "07-May-2026") to unlock sales velocity &amp; aging stock analysis.' : `No 60‑day snapshot found — need at least 2 dated sheets.`}</div>`;
                 return;
             }
-            const {items,latestKey,key60}=result;
-            const counts={fast:0,normal:0,slow:0,dead:0,new:0,out:0};
-            items.forEach(i=>{counts[i.status]=(counts[i.status]||0)+1;});
-            const SM={fast:{label:'🔥 Fast',bg:'#dcfce7',tc:'#166534'},normal:{label:'✅ Normal',bg:'#dbeafe',tc:'#1e40af'},slow:{label:'⚠️ Slow',bg:'#fef9c3',tc:'#854d0e'},dead:{label:'❌ Aging',bg:'#fee2e2',tc:'#991b1b'},new:{label:'🆕 New SKU',bg:'#f3e8ff',tc:'#6b21a8'},out:{label:'⬜ OOS',bg:'#f1f5f9',tc:'#475569'}};
+            const { items, latestKey, key60 } = result;
+            const counts = { fast: 0, normal: 0, slow: 0, dead: 0, new: 0, out: 0 };
+            items.forEach(i => { counts[i.status] = (counts[i.status] || 0) + 1; });
+            const SM = { fast: { label: '🔥 Fast', bg: '#dcfce7', tc: '#166534' }, normal: { label: '✅ Normal', bg: '#dbeafe', tc: '#1e40af' }, slow: { label: '⚠️ Slow', bg: '#fef9c3', tc: '#854d0e' }, dead: { label: '❌ Aging', bg: '#fee2e2', tc: '#991b1b' }, new: { label: '🆕 New SKU', bg: '#f3e8ff', tc: '#6b21a8' }, out: { label: '⬜ OOS', bg: '#f1f5f9', tc: '#475569' } };
             const refPeriod = key60
                 ? `${formatDateToShort(key60)} → ${formatDateToShort(latestKey)} (${Math.round(result.days60)}d)`
                 : '';
-            const filtered=_rrFilter==='all'?items:items.filter(i=>i.status===_rrFilter);
-            const sorted=[...filtered].sort((a,b)=>{ if(_rrFilter==='dead'||_rrFilter==='slow') return b.daysLeft-a.daysLeft; return b.best-a.best; });
-            const show=sorted.slice(0,100);
-            const trows=show.map(item=>{
-                const sm=SM[item.status]||SM.slow;
-                const rrStr=item.rr60!=null?item.rr60.toFixed(1):'–';
-                const dlStr=item.daysLeft===0?'OOS':item.daysLeft===-1?'∞':`${item.daysLeft}d`;
-                const dlColor=item.daysLeft>0&&item.daysLeft<=30?'#b91c1c':item.daysLeft>30&&item.daysLeft<=60?'#a16207':'inherit';
-                return `<tr><td>${escHtml(item.name)}</td><td style="color:var(--muted);font-size:0.7rem;">${escHtml(item.id)}</td><td class="numeric">${(item.stockLevel||0).toLocaleString()}</td><td class="amount" style="font-weight:600;">${rrStr}</td><td class="numeric" style="font-weight:600;color:${dlColor}">${dlStr}</td><td><span style="background:${sm.bg};color:${sm.tc};font-size:0.68rem;padding:2px 8px;border-radius:20px;font-weight:700;white-space:nowrap;">${sm.label}</span></td></tr>`;
+            const filtered = _rrFilter === 'all' ? items : items.filter(i => i.status === _rrFilter);
+            // 根据当前排序状态排序
+            const sorted = [...filtered].sort((a, b) => {
+                const col = _rrSort.col;
+                const dir = _rrSort.asc ? 1 : -1;
+                let va, vb;
+                if (col === 0) { va = (a.name || '').toLowerCase(); vb = (b.name || '').toLowerCase(); }
+                else if (col === 1) { va = (a.id || '').toLowerCase(); vb = (b.id || '').toLowerCase(); }
+                else if (col === 2) { va = a.stockLevel || 0; vb = b.stockLevel || 0; }
+                else if (col === 3) { va = a.best || 0; vb = b.best || 0; }
+                else if (col === 4) { va = a.daysLeft; vb = b.daysLeft; }
+                else if (col === 5) { va = a.status || ''; vb = b.status || ''; }
+                else { va = a.best || 0; vb = b.best || 0; }
+                if (va < vb) return -1 * dir;
+                if (va > vb) return 1 * dir;
+                return 0;
+            });
+            const show = sorted.slice(0, 100);
+            const trows = show.map(item => {
+                const sm = SM[item.status] || SM.slow;
+                const rrStr = item.rr60 != null ? item.rr60.toFixed(1) : '–';
+                const dlStr = item.daysLeft === 0 ? 'OOS' : item.daysLeft === -1 ? '∞' : `${item.daysLeft}d`;
+                const dlColor = item.daysLeft > 0 && item.daysLeft <= 30 ? '#b91c1c' : item.daysLeft > 30 && item.daysLeft <= 60 ? '#a16207' : 'inherit';
+                return `<tr><td>${escHtml(item.name)}</td><td style="color:var(--muted);font-size:0.7rem;">${escHtml(item.id)}</td><td class="numeric">${(item.stockLevel || 0).toLocaleString()}</td><td class="amount" style="font-weight:600;">${rrStr}</td><td class="numeric" style="font-weight:600;color:${dlColor}">${dlStr}</td><td><span style="background:${sm.bg};color:${sm.tc};font-size:0.68rem;padding:2px 8px;border-radius:20px;font-weight:700;white-space:nowrap;">${sm.label}</span></td></tr>`;
             }).join('');
-            const filterBtns=['all','fast','normal','slow','dead'].map(f=>{
-                const labels={all:'All',fast:'🔥 Fast',normal:'✅ Normal',slow:'⚠️ Slow',dead:'❌ Aging'};
-                const cnt=f!=='all'?(counts[f]||0):'';
-                const isActive=_rrFilter===f;
-                return `<button onclick="window.__rrFilter('${f}')" style="border:1px solid ${isActive?'var(--primary)':'#d8e0ea'};background:${isActive?'var(--primary)':'#fff'};color:${isActive?'#fff':'var(--text)'};border-radius:20px;padding:4px 12px;font-size:0.75rem;cursor:pointer;">${labels[f]}${cnt!==''?' ('+cnt+')':''}</button>`;
+            const filterBtns = ['all', 'fast', 'normal', 'slow', 'dead'].map(f => {
+                const labels = { all: 'All', fast: '🔥 Fast', normal: '✅ Normal', slow: '⚠️ Slow', dead: '❌ Aging' };
+                const cnt = f !== 'all' ? (counts[f] || 0) : '';
+                const isActive = _rrFilter === f;
+                return `<button onclick="window.__rrFilter('${f}')" style="border:1px solid ${isActive ? 'var(--primary)' : '#d8e0ea'};background:${isActive ? 'var(--primary)' : '#fff'};color:${isActive ? '#fff' : 'var(--text)'};border-radius:20px;padding:4px 12px;font-size:0.75rem;cursor:pointer;">${labels[f]}${cnt !== '' ? ' (' + cnt + ')' : ''}</button>`;
             }).join('');
-            container.innerHTML=`<div class="card" style="padding:16px;margin-bottom:20px;">
+            // 表头生成（带排序箭头）
+            const headers = ['Name', 'SKU', 'Stock', 'Run Rate', 'Days Left', 'Status'];
+            const thCells = headers.map((label, idx) => {
+                const isActive = _rrSort.col === idx;
+                const arrow = isActive ? (_rrSort.asc ? ' ▲' : ' ▼') : '';
+                const extraStyle = (idx === 2 || idx === 3 || idx === 4) ? 'text-align:right;' : '';
+                return `<th style="cursor:pointer;${extraStyle}" onclick="window.__rrSort(${idx})">${label}${arrow}</th>`;
+            }).join('');
+            container.innerHTML = `<div class="card" style="padding:16px;margin-bottom:20px;">
 <h3 style="display:flex;align-items:center;gap:8px;margin-bottom:14px;color:#3f4b5b;font-size:0.9rem;text-transform:uppercase;">
     📊 Run Rate Analysis
     <span style="font-size:0.7rem;color:var(--muted);text-transform:none;font-weight:400;">Period: ${escHtml(refPeriod)}</span>
 </h3>
 <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:14px;">
-${['fast','normal','slow','dead'].map(s=>{const sm=SM[s];return `<div onclick="window.__rrFilter('${s}')" style="background:${sm.bg};border-radius:8px;padding:12px;cursor:pointer;"><div style="font-size:0.68rem;font-weight:700;color:${sm.tc};text-transform:uppercase;margin-bottom:4px;">${sm.label}</div><div style="font-size:1.6rem;font-weight:700;color:${sm.tc};line-height:1;">${counts[s]||0}</div><div style="font-size:0.65rem;color:${sm.tc};margin-top:2px;opacity:0.8;">SKUs</div></div>`;}).join('')}
+${['fast','normal','slow','dead'].map(s => { const sm = SM[s]; return `<div onclick="window.__rrFilter('${s}')" style="background:${sm.bg};border-radius:8px;padding:12px;cursor:pointer;"><div style="font-size:0.68rem;font-weight:700;color:${sm.tc};text-transform:uppercase;margin-bottom:4px;">${sm.label}</div><div style="font-size:1.6rem;font-weight:700;color:${sm.tc};line-height:1;">${counts[s] || 0}</div><div style="font-size:0.65rem;color:${sm.tc};margin-top:2px;opacity:0.8;">SKUs</div></div>`; }).join('')}
 </div>
 <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;">${filterBtns}</div>
 <div style="overflow-x:auto;">
 <table class="full-table" style="font-size:0.77rem;">
-<thead><tr><th>Name</th><th>SKU</th><th class="numeric">Stock</th><th class="amount">Run Rate<span style="font-size:0.65rem;font-weight:400;margin-left:3px;">/30d</span></th><th class="numeric">Days Left</th><th>Status</th></tr></thead>
-<tbody>${trows||'<tr><td colspan="6" style="text-align:center;color:#aaa;padding:20px;">No items in this category</td></tr>'}</tbody>
+<thead><tr>${thCells}</tr></thead>
+<tbody>${trows || '<tr><td colspan="6" style="text-align:center;color:#aaa;padding:20px;">No items in this category</td></tr>'}</tbody>
 </table></div>
-${show.length<filtered.length?`<div style="color:var(--muted);font-size:0.72rem;margin-top:8px;">Showing top ${show.length} of ${filtered.length} items — export to view all.</div>`:''}
+${show.length < filtered.length ? `<div style="color:var(--muted);font-size:0.72rem;margin-top:8px;">Showing top ${show.length} of ${filtered.length} items — export to view all.</div>` : ''}
 <div style="color:var(--muted);font-size:0.68rem;margin-top:8px;">* = 60-day estimate &nbsp;·&nbsp; ∞ = no movement detected &nbsp;·&nbsp; Days Left = stock ÷ daily run rate &nbsp;·&nbsp; Fast ≥10 units/30d &nbsp;·&nbsp; Normal ≥3</div>
 </div>`;
-            window.__rrFilter=(f)=>{ _rrFilter=f; renderRunRate(); };
+            // 暴露排序函数到全局
+            window.__rrSort = (col) => {
+                if (_rrSort.col === col) {
+                    _rrSort.asc = !_rrSort.asc;
+                } else {
+                    _rrSort.col = col;
+                    _rrSort.asc = (col === 3 || col === 4) ? false : true; // Run Rate/Days Left默认降序，其余升序
+                }
+                renderRunRate();
+            };
+            window.__rrFilter = (f) => { _rrFilter = f; renderRunRate(); };
         }
 
         let lowStockThreshold = toInteger(localStorage.getItem(STORAGE.lowStockThreshold), DEFAULT_LOW_STOCK);
