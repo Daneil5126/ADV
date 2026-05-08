@@ -218,7 +218,8 @@
     </aside>
     <main class="main-content">
         <section class="page active" id="page-dashboard">
-            <div class="header"><h2>📊 Dashboard</h2><div class="button-row"><input type="file" id="fileInput" accept=".xlsx,.xls" hidden><button class="btn btn-primary" id="uploadBtn">📤 Upload Excel</button><button class="btn btn-success" id="exportBtn">📥 Export</button><button class="btn btn-muted" id="clearInventoryBtn">Clear Data</button></div></div>
+            <div class="header"><h2>📊 Dashboard</h2><div class="button-row"><input type="file" id="fileInput" accept=".xlsx,.xls" hidden><button class="btn btn-primary" id="uploadBtn">📤 Upload Excel</button><button class="btn btn-success" id="exportBtn">📥 Export</button><button class="btn btn-muted" id="clearInventoryBtn">Clear Data</button><button class="btn" id="autoSyncBtn" style="background:#6366f1;">🔄 Sync from Cloud</button></div></div>
+            <div id="syncStatus" style="font-size:0.7rem;color:var(--muted);margin-bottom:8px;"></div>
             <div id="statusMsg" class="status-msg" role="status"></div>
             <div class="stats-row">
                 <div class="stat-card"><div class="label">Date / Time</div><div class="value" id="liveDateTime">--</div></div>
@@ -244,7 +245,6 @@
             </div>
             <div class="app-credit">Created by DANEIL G.CS | Optimized Edition</div>
         </section>
-
         <section class="page" id="page-calculator">
             <div class="calculator" id="app">
                 <div class="calc-header">
@@ -303,7 +303,6 @@
                 </div>
             </div>
         </section>
-
         <section class="page" id="page-inventory">
             <div class="header"><h2>📦 Full Inventory</h2></div>
             <div class="card">
@@ -334,7 +333,6 @@
                 <div class="pagination" id="invPagination"></div>
             </div>
         </section>
-
         <section class="page placeholder" id="page-sales"><h2>🛒 Sales</h2><p>Coming soon...</p></section>
         <section class="page placeholder" id="page-purchases"><h2>📦 Purchases</h2><p>Coming soon...</p></section>
         <section class="page placeholder" id="page-integrations"><h2>🔗 Integrations</h2><p>Coming soon...</p></section>
@@ -349,7 +347,7 @@
     </main>
 
     <script>
-    // ========== Inventory Core System ==========
+    // ========== Inventory Core System (FULL) ==========
     (function() {
         'use strict';
         function showConfirm(msg, onOk) {
@@ -420,11 +418,24 @@
         const formatTime12h = () => { const now = new Date(); const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']; let h = now.getHours(); const ampm = h>=12?'PM':'AM'; h = h%12||12; return `${now.getDate()} ${months[now.getMonth()]} ${now.getFullYear()} ${h}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')} ${ampm}`; };
         const setStatus = msg => { const el = $('#statusMsg'); if(el) el.textContent = msg || ''; };
 
-        // Mini table sort state
-        const miniSortState = {
-            lowStock: { col: null, asc: true },
-            topItems: { col: null, asc: true }
-        };
+        const miniSortState = { lowStock: { col: null, asc: true }, topItems: { col: null, asc: true } };
+
+        // ===== Cloud Sync =====
+        const PUBLISH_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRY9d-kqGQBqmcjTzUKSHA_9oIjAQSJ_lYLD8YCK1-KqvlqMFo_iuJ6pb4gS2inqQ/pub?output=xlsx';
+        async function fetchFromCloud() {
+            setStatus('⏳ Fetching latest inventory from Google Sheets...');
+            try {
+                const response = await fetch(PUBLISH_URL);
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                const blob = await response.blob();
+                const file = new File([blob], 'Inventory.xlsx', { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+                await handleFile(file);
+                document.getElementById('syncStatus').textContent = `✅ Last sync: ${new Date().toLocaleString()}`;
+                localStorage.setItem('lastCloudSync', Date.now());
+            } catch (err) {
+                setStatus(`❌ Cloud sync failed: ${err.message}`);
+            }
+        }
 
         // ===== RUN RATE ANALYSIS =====
         const MONTH_IDX = {jan:0,feb:1,mar:2,apr:3,may:4,jun:5,jul:6,aug:7,sep:8,oct:9,nov:10,dec:11};
@@ -1055,6 +1066,13 @@ ${show.length<filtered.length?`<div style="color:var(--muted);font-size:0.72rem;
                 else { state.sortColumn=col; state.sortDirection='asc'; }
                 state.currentPage=1; renderInventoryPage();
             });
+            // Cloud Sync button
+            document.getElementById('autoSyncBtn').addEventListener('click', fetchFromCloud);
+            const lastSync = localStorage.getItem('lastCloudSync');
+            if (lastSync) {
+                document.getElementById('syncStatus').textContent = `✅ Last sync: ${new Date(parseInt(lastSync)).toLocaleString()}`;
+            }
+            // Clock
             state.clockTimer = setInterval(() => { const el = $('#liveDateTime'); if(el) el.textContent = formatTime12h(); }, 1000);
             renderDashboard();
             renderInventoryPage();
