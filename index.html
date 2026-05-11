@@ -118,6 +118,15 @@
         .change-table { font-size: 0.75rem; }
         .app-credit { margin-top: 10px; color: #94a3b8; font-size: 0.65rem; text-align: right; }
         .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+        /* 搜索高亮样式 */
+        .highlight {
+            background-color: #fef08a;
+            color: #854d0e;
+            font-weight: 700;
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+        /* 计算器样式 */
         .calculator { max-width: 580px; width: 100%; background: white; border-radius: 48px; box-shadow: 0 25px 45px -12px rgba(0,0,0,0.25); overflow: hidden; padding: 24px 20px 28px; margin: 0 auto; }
         .calc-header { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 12px; margin-bottom: 16px; padding-bottom: 8px; border-bottom: 1px solid #eef2f8; }
         .calc-title { font-size: 1.6rem; font-weight: 700; background: linear-gradient(135deg, #1e6f4c, #2b8c5e); background-clip: text; -webkit-background-clip: text; color: transparent; }
@@ -418,16 +427,23 @@
         const formatTime12h = () => { const now = new Date(); const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']; let h = now.getHours(); const ampm = h>=12?'PM':'AM'; h = h%12||12; return `${now.getDate()} ${months[now.getMonth()]} ${now.getFullYear()} ${h}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')} ${ampm}`; };
         const setStatus = msg => { const el = $('#statusMsg'); if(el) el.textContent = msg || ''; };
 
+        // 搜索高亮函数
+        function highlightText(text, query) {
+            if (!query) return escHtml(text);
+            const escaped = escHtml(text);
+            const escapedQuery = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            const regex = new RegExp(`(${escapedQuery})`, 'gi');
+            return escaped.replace(regex, '<span class="highlight">$1</span>');
+        }
+
         const miniSortState = { lowStock: { col: null, asc: true }, topItems: { col: null, asc: true } };
 
-        // Cloud Sync - 修改为同步前清除旧快照
+        // Cloud Sync
         const PUBLISH_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRY9d-kqGQBqmcjTzUKSHA_9oIjAQSJ_lYLD8YCK1-KqvlqMFo_iuJ6pb4gS2inqQ/pub?output=xlsx';
         async function fetchFromCloud() {
             setStatus('⏳ Fetching latest inventory from Google Sheets...');
             try {
-                // 🔧 先清除旧的工作表快照，避免旧日期残留
                 localStorage.removeItem(STORAGE.allSheets);
-                
                 const response = await fetch(PUBLISH_URL);
                 if (!response.ok) throw new Error(`HTTP ${response.status}`);
                 const blob = await response.blob();
@@ -486,57 +502,44 @@
             const latestKey = keys[keys.length - 1];
             const latestDate = new Date(latestKey);
 
-            // 固定找 60 天前的工作表
+            // 目标日期：60 天前
             const t60 = new Date(latestDate);
             t60.setDate(t60.getDate() - 60);
 
-            // 找最接近 60 天前的旧表
+            // 在所有旧表中找到与 t60 最接近的一个（无天数限制）
             const otherKeys = keys.slice(0, -1);
-            const key60 = findClosestKey(otherKeys, t60);
-
-            // 如果没有找到任何旧表，返回 null
-            if (!key60) return null;
+            let bestKey = null, bestDiff = Infinity;
+            otherKeys.forEach(k => {
+                const diff = Math.abs(new Date(k) - t60);
+                if (diff < bestDiff) { bestDiff = diff; bestKey = k; }
+            });
+            if (!bestKey) return null;
 
             const latest = allSheets[latestKey].items;
-            const map60 = new Map(allSheets[key60].items.map(i => [i.id, i.stockLevel]));
+            const map60 = new Map(allSheets[bestKey].items.map(i => [i.id, i.stockLevel]));
 
-            // 计算实际间隔天数
-            const days60 = Math.max(1, (latestDate - new Date(key60)) / 86400000);
+            const days60 = Math.max(1, (latestDate - new Date(bestKey)) / 86400000);
 
             const items = latest.map(item => {
                 const qty = item.stockLevel || 0;
                 const q60 = map60.has(item.id) ? map60.get(item.id) : null;
-
-                // 只用 60 天数据计算 Run Rate
                 const rr60 = (q60 != null) ? Math.max(0, (q60 - qty) / days60 * 30) : null;
                 const best = rr60 != null ? rr60 : 0;
-
-                // 计算剩余天数
                 const daysLeft = best > 0 ? Math.round(qty / (best / 30)) : (qty > 0 ? -1 : 0);
-
-                // 判断状态
                 let status;
-                if (q60 == null) {
-                    status = 'new';
-                } else if (best >= 10) {
-                    status = 'fast';
-                } else if (best >= 3) {
-                    status = 'normal';
-                } else if (best > 0) {
-                    status = 'slow';
-                } else if (qty > 0) {
-                    status = 'dead';
-                } else {
-                    status = 'out';
-                }
-
+                if (q60 == null) status = 'new';
+                else if (best >= 10) status = 'fast';
+                else if (best >= 3) status = 'normal';
+                else if (best > 0) status = 'slow';
+                else if (qty > 0) status = 'dead';
+                else status = 'out';
                 return { ...item, rr60: rr60, best, daysLeft, status };
             });
 
-            return { latestKey, key60, days60, items };
+            return { latestKey, key60: bestKey, days60, items };
         }
         let _rrFilter = 'all';
-        let _rrSort = { col: 3, asc: false }; // 默认按 Run Rate 降序
+        let _rrSort = { col: 3, asc: false };
 
         function renderRunRate() {
             const container = $('#runRateContainer'); if (!container) return;
@@ -554,7 +557,6 @@
                 ? `${formatDateToShort(key60)} → ${formatDateToShort(latestKey)} (${Math.round(result.days60)}d)`
                 : '';
             const filtered = _rrFilter === 'all' ? items : items.filter(i => i.status === _rrFilter);
-            // 根据当前排序状态排序
             const sorted = [...filtered].sort((a, b) => {
                 const col = _rrSort.col;
                 const dir = _rrSort.asc ? 1 : -1;
@@ -584,7 +586,6 @@
                 const isActive = _rrFilter === f;
                 return `<button onclick="window.__rrFilter('${f}')" style="border:1px solid ${isActive ? 'var(--primary)' : '#d8e0ea'};background:${isActive ? 'var(--primary)' : '#fff'};color:${isActive ? '#fff' : 'var(--text)'};border-radius:20px;padding:4px 12px;font-size:0.75rem;cursor:pointer;">${labels[f]}${cnt !== '' ? ' (' + cnt + ')' : ''}</button>`;
             }).join('');
-            // 表头生成（带排序箭头）
             const headers = ['Name', 'SKU', 'Stock', 'Run Rate', 'Days Left', 'Status'];
             const thCells = headers.map((label, idx) => {
                 const isActive = _rrSort.col === idx;
@@ -609,13 +610,12 @@ ${['fast','normal','slow','dead'].map(s => { const sm = SM[s]; return `<div oncl
 ${show.length < filtered.length ? `<div style="color:var(--muted);font-size:0.72rem;margin-top:8px;">Showing top ${show.length} of ${filtered.length} items — export to view all.</div>` : ''}
 <div style="color:var(--muted);font-size:0.68rem;margin-top:8px;">* = 60-day estimate &nbsp;·&nbsp; ∞ = no movement detected &nbsp;·&nbsp; Days Left = stock ÷ daily run rate &nbsp;·&nbsp; Fast ≥10 units/30d &nbsp;·&nbsp; Normal ≥3</div>
 </div>`;
-            // 暴露排序函数到全局
             window.__rrSort = (col) => {
                 if (_rrSort.col === col) {
                     _rrSort.asc = !_rrSort.asc;
                 } else {
                     _rrSort.col = col;
-                    _rrSort.asc = (col === 3 || col === 4) ? false : true; // Run Rate/Days Left默认降序，其余升序
+                    _rrSort.asc = (col === 3 || col === 4) ? false : true;
                 }
                 renderRunRate();
             };
@@ -840,41 +840,44 @@ ${show.length < filtered.length ? `<div style="color:var(--muted);font-size:0.72
         
         function renderInventoryPage() {
             const data = getInventory();
-            const search = ($('#invSearchInput').value||'').trim().toLowerCase();
+            const search = ($('#invSearchInput').value || '').trim().toLowerCase();
             const group = $('#invGroupFilter').value || 'all';
             const marginPercent = toNumber($('#invMarginInput').value);
             let filtered = data;
-            if(group !== 'all') filtered = filtered.filter(i => i.productGroup === group);
-            if(search) filtered = filtered.filter(i => i.name.toLowerCase().includes(search) || i.id.toLowerCase().includes(search));
-            if(state.sortColumn >= 0) {
-                const cols = ['name','id','location','available','unitCost','landingCost','minSellPrice','salesQty','restockQty','daysNoMovement'];
+            if (group !== 'all') filtered = filtered.filter(i => i.productGroup === group);
+            if (search) filtered = filtered.filter(i => i.name.toLowerCase().includes(search) || i.id.toLowerCase().includes(search));
+            if (state.sortColumn >= 0) {
+                const cols = ['name', 'id', 'location', 'available', 'unitCost', 'landingCost', 'minSellPrice', 'salesQty', 'restockQty', 'daysNoMovement'];
                 const col = cols[state.sortColumn];
-                filtered.sort((a,b) => {
-                    let va = col==='landingCost' ? calculateLandingCost(a.unitCost) : col==='minSellPrice' ? calculateMinSell(a.unitCost, marginPercent) : (a[col]??'');
-                    let vb = col==='landingCost' ? calculateLandingCost(b.unitCost) : col==='minSellPrice' ? calculateMinSell(b.unitCost, marginPercent) : (b[col]??'');
-                    if(typeof va === 'string') va = va.toLowerCase();
-                    if(typeof vb === 'string') vb = vb.toLowerCase();
-                    if(va < vb) return state.sortDirection==='asc' ? -1 : 1;
-                    if(va > vb) return state.sortDirection==='asc' ? 1 : -1;
+                filtered.sort((a, b) => {
+                    let va = col === 'landingCost' ? calculateLandingCost(a.unitCost) : col === 'minSellPrice' ? calculateMinSell(a.unitCost, marginPercent) : (a[col] ?? '');
+                    let vb = col === 'landingCost' ? calculateLandingCost(b.unitCost) : col === 'minSellPrice' ? calculateMinSell(b.unitCost, marginPercent) : (b[col] ?? '');
+                    if (typeof va === 'string') va = va.toLowerCase();
+                    if (typeof vb === 'string') vb = vb.toLowerCase();
+                    if (va < vb) return state.sortDirection === 'asc' ? -1 : 1;
+                    if (va > vb) return state.sortDirection === 'asc' ? 1 : -1;
                     return 0;
                 });
             }
             const totalPages = Math.max(1, Math.ceil(filtered.length / state.pageSize));
-            if(state.currentPage > totalPages) state.currentPage = totalPages;
-            const start = (state.currentPage-1)*state.pageSize;
-            const pageItems = filtered.slice(start, start+state.pageSize);
+            if (state.currentPage > totalPages) state.currentPage = totalPages;
+            const start = (state.currentPage - 1) * state.pageSize;
+            const pageItems = filtered.slice(start, start + state.pageSize);
             const tbody = $('#invTableBody');
+            const searchTerm = ($('#invSearchInput').value || '').trim();
             tbody.innerHTML = pageItems.length ? pageItems.map(item => {
                 const landing = calculateLandingCost(item.unitCost);
                 const minSell = calculateMinSell(item.unitCost, marginPercent);
                 return `<tr>
-                    <td>${escHtml(item.name)}</td><td>${escHtml(item.id)}</td><td>${escHtml(item.location)}</td>
-                    <td class="numeric">${(item.available??item.stockLevel).toLocaleString()}</td>
+                    <td>${highlightText(item.name, searchTerm)}</td>
+                    <td>${highlightText(item.id, searchTerm)}</td>
+                    <td>${escHtml(item.location)}</td>
+                    <td class="numeric">${(item.available ?? item.stockLevel).toLocaleString()}</td>
                     <td class="amount">RM ${formatMoney(item.unitCost)}</td>
                     <td class="amount">RM ${formatMoney(landing)}</td>
                     <td class="amount">RM ${formatMoney(minSell)}</td>
-                    <td class="numeric">${(item.salesQty||0).toLocaleString()}</td>
-                    <td class="numeric">${(item.restockQty||0).toLocaleString()}</td>
+                    <td class="numeric">${(item.salesQty || 0).toLocaleString()}</td>
+                    <td class="numeric">${(item.restockQty || 0).toLocaleString()}</td>
                     <td class="numeric">${item.daysNoMovement == null ? '-' : item.daysNoMovement.toLocaleString()}</td>
                 </tr>`;
             }).join('') : '<tr><td colspan="10">No items found</td></tr>';
@@ -884,13 +887,13 @@ ${show.length < filtered.length ? `<div style="color:var(--muted);font-size:0.72
             let displayText = '';
             if (fileName || sheetName) displayText = `📁 ${fileName}${sheetName ? ` → 📄 ${sheetName}` : ''}`;
             $('#invFileName').textContent = displayText;
-            $('#inventoryCountLabel').textContent = `${filtered.length.toLocaleString()} item${filtered.length===1?'':'s'}`;
+            $('#inventoryCountLabel').textContent = `${filtered.length.toLocaleString()} item${filtered.length === 1 ? '' : 's'}`;
             renderPagination(totalPages);
             updateSortIndicators();
             const groups = [...new Set(data.map(i => i.productGroup))].sort();
             const sel = $('#invGroupFilter');
-            const curOpts = Array.from(sel.options).map(o=>o.value).filter(v=>v!=='all').join(',');
-            if(groups.join(',') !== curOpts) {
+            const curOpts = Array.from(sel.options).map(o => o.value).filter(v => v !== 'all').join(',');
+            if (groups.join(',') !== curOpts) {
                 sel.innerHTML = '<option value="all">All Groups</option>' + groups.map(g => `<option value="${escHtml(g)}">${escHtml(g)}</option>`).join('');
             }
             sel.value = group;
