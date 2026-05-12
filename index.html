@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
-    <title>Inventory Suite | Product Calculator v6.6 Final · Sheet Traceability</title>
+    <title>Busniess Unit Version 7.0</title>
     <script>
     (function() {
         var cdns = [
@@ -114,19 +114,16 @@
         .change-body { display: none; margin-top: 12px; }
         .change-card.open .change-body { display: block; }
         .change-section { margin-bottom: 14px; }
-        .change-section h4 { margin-bottom: 6px; color: #475569; font-size: 0.82rem; }
+        .change-section h4 { margin-bottom: 6px; color: #475569; font-size: 0.82rem; cursor: pointer; display: flex; align-items: center; gap: 4px; }
+        .change-section h4 .section-arrow { transition: transform 0.2s; font-size: 0.7rem; }
+        .change-section.collapsed .section-arrow { transform: rotate(-90deg); }
+        .change-section.collapsed .change-table-wrap { display: none; }
         .change-table { font-size: 0.75rem; }
+        .change-table th { cursor: pointer; }
+        .change-table th:hover { background: #edf2f9; }
         .app-credit { margin-top: 10px; color: #94a3b8; font-size: 0.65rem; text-align: right; }
         .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
-        /* 搜索高亮样式 */
-        .highlight {
-            background-color: #fef08a;
-            color: #854d0e;
-            font-weight: 700;
-            padding: 2px 4px;
-            border-radius: 3px;
-        }
-        /* 计算器样式 */
+        .highlight { background-color: #fef08a; color: #854d0e; font-weight: 700; padding: 2px 4px; border-radius: 3px; }
         .calculator { max-width: 580px; width: 100%; background: white; border-radius: 48px; box-shadow: 0 25px 45px -12px rgba(0,0,0,0.25); overflow: hidden; padding: 24px 20px 28px; margin: 0 auto; }
         .calc-header { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 12px; margin-bottom: 16px; padding-bottom: 8px; border-bottom: 1px solid #eef2f8; }
         .calc-title { font-size: 1.6rem; font-weight: 700; background: linear-gradient(135deg, #1e6f4c, #2b8c5e); background-clip: text; -webkit-background-clip: text; color: transparent; }
@@ -211,7 +208,7 @@
     <aside class="sidebar" id="sidebar">
         <div class="logo">
             <button class="sidebar-hide-btn" id="sidebarHideBtn" type="button" aria-label="Hide menu">✕</button>
-            <span class="logo-title">⚡ Function Pro</span>
+            <span class="logo-title">Menu</span>
         </div>
         <nav>
             <a class="active" data-page="dashboard">📊 Dashboard</a>
@@ -348,8 +345,9 @@
         <section class="page placeholder" id="page-channels"><h2>📡 Active Channels</h2><p>Coming soon...</p></section>
         <section class="page" id="page-reports">
             <div class="header"><h2>📄 Reports</h2></div>
-            <div id="runRateContainer"></div>
+            <!-- 交换位置：Change Report 在上 -->
             <div class="change-report" id="changeReportContainer"></div>
+            <div id="runRateContainer"></div>
             <div class="app-credit">Created by DANEIL G.CS | Optimized Edition</div>
         </section>
         <section class="page placeholder" id="page-documents"><h2>📁 Documents</h2><p>Coming soon...</p></section>
@@ -427,7 +425,6 @@
         const formatTime12h = () => { const now = new Date(); const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']; let h = now.getHours(); const ampm = h>=12?'PM':'AM'; h = h%12||12; return `${now.getDate()} ${months[now.getMonth()]} ${now.getFullYear()} ${h}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')} ${ampm}`; };
         const setStatus = msg => { const el = $('#statusMsg'); if(el) el.textContent = msg || ''; };
 
-        // 搜索高亮函数
         function highlightText(text, query) {
             if (!query) return escHtml(text);
             const escaped = escHtml(text);
@@ -438,7 +435,6 @@
 
         const miniSortState = { lowStock: { col: null, asc: true }, topItems: { col: null, asc: true } };
 
-        // Cloud Sync
         const PUBLISH_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRY9d-kqGQBqmcjTzUKSHA_9oIjAQSJ_lYLD8YCK1-KqvlqMFo_iuJ6pb4gS2inqQ/pub?output=xlsx';
         async function fetchFromCloud() {
             setStatus('⏳ Fetching latest inventory from Google Sheets...');
@@ -473,7 +469,7 @@
         function findClosestKey(keys, target) {
             let best=null, bestDiff=Infinity;
             keys.forEach(k=>{ const diff=Math.abs(new Date(k)-target); if(diff<bestDiff){bestDiff=diff;best=k;} });
-            return bestDiff<25*864e5 ? best : null;
+            return best ? best : null;
         }
         function parseSheetSnapshot(wb, sn) {
             try {
@@ -501,12 +497,8 @@
 
             const latestKey = keys[keys.length - 1];
             const latestDate = new Date(latestKey);
-
-            // 目标日期：60 天前
             const t60 = new Date(latestDate);
             t60.setDate(t60.getDate() - 60);
-
-            // 在所有旧表中找到与 t60 最接近的一个（无天数限制）
             const otherKeys = keys.slice(0, -1);
             let bestKey = null, bestDiff = Infinity;
             otherKeys.forEach(k => {
@@ -517,7 +509,6 @@
 
             const latest = allSheets[latestKey].items;
             const map60 = new Map(allSheets[bestKey].items.map(i => [i.id, i.stockLevel]));
-
             const days60 = Math.max(1, (latestDate - new Date(bestKey)) / 86400000);
 
             const items = latest.map(item => {
@@ -535,11 +526,11 @@
                 else status = 'out';
                 return { ...item, rr60: rr60, best, daysLeft, status };
             });
-
             return { latestKey, key60: bestKey, days60, items };
         }
         let _rrFilter = 'all';
         let _rrSort = { col: 3, asc: false };
+        let _rrCollapsed = false; // Run Rate 折叠状态
 
         function renderRunRate() {
             const container = $('#runRateContainer'); if (!container) return;
@@ -593,23 +584,36 @@
                 const extraStyle = (idx === 2 || idx === 3 || idx === 4) ? 'text-align:right;' : '';
                 return `<th style="cursor:pointer;${extraStyle}" onclick="window.__rrSort(${idx})">${label}${arrow}</th>`;
             }).join('');
-            container.innerHTML = `<div class="card" style="padding:16px;margin-bottom:20px;">
-<h3 style="display:flex;align-items:center;gap:8px;margin-bottom:14px;color:#3f4b5b;font-size:0.9rem;text-transform:uppercase;">
-    📊 Run Rate Analysis
-    <span style="font-size:0.7rem;color:var(--muted);text-transform:none;font-weight:400;">Period: ${escHtml(refPeriod)}</span>
-</h3>
-<div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:14px;">
-${['fast','normal','slow','dead'].map(s => { const sm = SM[s]; return `<div onclick="window.__rrFilter('${s}')" style="background:${sm.bg};border-radius:8px;padding:12px;cursor:pointer;"><div style="font-size:0.68rem;font-weight:700;color:${sm.tc};text-transform:uppercase;margin-bottom:4px;">${sm.label}</div><div style="font-size:1.6rem;font-weight:700;color:${sm.tc};line-height:1;">${counts[s] || 0}</div><div style="font-size:0.65rem;color:${sm.tc};margin-top:2px;opacity:0.8;">SKUs</div></div>`; }).join('')}
-</div>
-<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;">${filterBtns}</div>
-<div style="overflow-x:auto;">
-<table class="full-table" style="font-size:0.77rem;">
-<thead><tr>${thCells}</tr></thead>
-<tbody>${trows || '<tr><td colspan="6" style="text-align:center;color:#aaa;padding:20px;">No items in this category</td></tr>'}</tbody>
-</table></div>
-${show.length < filtered.length ? `<div style="color:var(--muted);font-size:0.72rem;margin-top:8px;">Showing top ${show.length} of ${filtered.length} items — export to view all.</div>` : ''}
-<div style="color:var(--muted);font-size:0.68rem;margin-top:8px;">* = 60-day estimate &nbsp;·&nbsp; ∞ = no movement detected &nbsp;·&nbsp; Days Left = stock ÷ daily run rate &nbsp;·&nbsp; Fast ≥10 units/30d &nbsp;·&nbsp; Normal ≥3</div>
-</div>`;
+            // 构建可折叠的 Run Rate 卡片
+            container.innerHTML = `<div class="change-card open" id="rrCard">
+                <h3 onclick="window.__toggleRR()" style="display:flex;align-items:center;gap:6px;margin-bottom:10px;color:#3f4b5b;font-size:0.9rem;text-transform:uppercase;cursor:pointer;">
+                    📊 Run Rate Analysis <span class="arrow" style="transition:transform 0.2s;font-size:0.75rem;">▶</span>
+                    <span style="font-size:0.7rem;color:var(--muted);text-transform:none;font-weight:400;">Period: ${escHtml(refPeriod)}</span>
+                </h3>
+                <div class="change-body" id="rrBody" style="display:block;">
+                    <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:14px;">
+                        ${['fast','normal','slow','dead'].map(s => { const sm = SM[s]; return `<div onclick="window.__rrFilter('${s}')" style="background:${sm.bg};border-radius:8px;padding:12px;cursor:pointer;"><div style="font-size:0.68rem;font-weight:700;color:${sm.tc};text-transform:uppercase;margin-bottom:4px;">${sm.label}</div><div style="font-size:1.6rem;font-weight:700;color:${sm.tc};line-height:1;">${counts[s] || 0}</div><div style="font-size:0.65rem;color:${sm.tc};margin-top:2px;opacity:0.8;">SKUs</div></div>`; }).join('')}
+                    </div>
+                    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;">${filterBtns}</div>
+                    <div style="overflow-x:auto;">
+                        <table class="full-table" style="font-size:0.77rem;">
+                            <thead><tr>${thCells}</tr></thead>
+                            <tbody>${trows || '<tr><td colspan="6" style="text-align:center;color:#aaa;padding:20px;">No items in this category</td></tr>'}</tbody>
+                        </table>
+                    </div>
+                    ${show.length < filtered.length ? `<div style="color:var(--muted);font-size:0.72rem;margin-top:8px;">Showing top ${show.length} of ${filtered.length} items — export to view all.</div>` : ''}
+                    <div style="color:var(--muted);font-size:0.68rem;margin-top:8px;">* = 60-day estimate &nbsp;·&nbsp; ∞ = no movement detected &nbsp;·&nbsp; Days Left = stock ÷ daily run rate &nbsp;·&nbsp; Fast ≥10 units/30d &nbsp;·&nbsp; Normal ≥3</div>
+                </div>
+            </div>`;
+            // 设置折叠状态
+            if (_rrCollapsed) {
+                const card = document.getElementById('rrCard');
+                const body = document.getElementById('rrBody');
+                const arrow = card?.querySelector('.arrow');
+                if (card) card.classList.remove('open');
+                if (body) body.style.display = 'none';
+                if (arrow) arrow.style.transform = 'rotate(0deg)';
+            }
             window.__rrSort = (col) => {
                 if (_rrSort.col === col) {
                     _rrSort.asc = !_rrSort.asc;
@@ -620,6 +624,22 @@ ${show.length < filtered.length ? `<div style="color:var(--muted);font-size:0.72
                 renderRunRate();
             };
             window.__rrFilter = (f) => { _rrFilter = f; renderRunRate(); };
+            window.__toggleRR = () => {
+                _rrCollapsed = !_rrCollapsed;
+                const card = document.getElementById('rrCard');
+                const body = document.getElementById('rrBody');
+                const arrow = card?.querySelector('.arrow');
+                if (!card || !body) return;
+                if (_rrCollapsed) {
+                    card.classList.remove('open');
+                    body.style.display = 'none';
+                    if (arrow) arrow.style.transform = 'rotate(0deg)';
+                } else {
+                    card.classList.add('open');
+                    body.style.display = 'block';
+                    if (arrow) arrow.style.transform = 'rotate(90deg)';
+                }
+            };
         }
 
         let lowStockThreshold = toInteger(localStorage.getItem(STORAGE.lowStockThreshold), DEFAULT_LOW_STOCK);
@@ -665,42 +685,82 @@ ${show.length < filtered.length ? `<div style="color:var(--muted);font-size:0.72
                 container.innerHTML = '<div class="change-card"><h3>📈 No changes detected since last upload</h3><div class="change-summary">Upload a new file to compare with previous data.</div></div>';
                 return;
             }
+            window.__changeReportData = report;
             const parts = [];
             if(report.newSkus.length) parts.push(`${report.newSkus.length} new`);
-            if(report.discontinuedSkus.length) parts.push(`${report.discontinuedSkus.length} discontinued`);
+            if(report.discontinuedSkus.length) parts.push(`${report.discontinuedSkus.length} no stock / EOL`);
             if(report.salesVelocity.length) parts.push(`${report.salesVelocity.length} sold`);
             if(report.noMovement.length) parts.push(`${report.noMovement.length} no movement`);
             if(report.restocked.length) parts.push(`${report.restocked.length} restocked`);
-            container.innerHTML = `<div class="change-card" id="changeCard"><h3 onclick="this.parentElement.classList.toggle('open')">📈 Inventory Change Report <span class="arrow">▶</span> <span style="font-size:0.7rem;color:#888;">${parts.join(', ')}</span></h3><div class="change-body" id="changeBody"></div></div>`;
+            
+            container.innerHTML = `<div class="change-card open" id="changeCard">
+                <h3 onclick="this.parentElement.classList.toggle('open')">📈 Inventory Change Report <span class="arrow">▶</span> <span style="font-size:0.7rem;color:#888;">${parts.join(', ')}</span></h3>
+                <div class="change-body" id="changeBody"></div>
+            </div>`;
             const body = $('#changeBody');
-            function createTable(items, cols, max=10) {
-                const sliced = items.slice(0,max);
-                let html = '<table class="change-table"><thead><tr>';
-                cols.forEach(c => html += `<th>${c}</th>`);
-                html += '</thead><tbody>';
-                sliced.forEach(item => {
-                    html += '<tr>';
-                    cols.forEach(c => {
-                        let val = '';
-                        if(c==='Name') val = escHtml(item.name);
-                        else if(c==='ID') val = escHtml(item.id);
-                        else if(c==='Stock Level') val = item.stockLevel||0;
-                        else if(c==='Change') val = `${item.change>0?'+':''}${item.change}`;
-                        else if(c==='Old Stock') val = item.oldStock;
-                        else val = item[c]||'';
-                        html += `<td>${val}</td>`;
-                    });
-                    html += '</tr>';
-                });
-                if(items.length>max) html += `<tr><td colspan="${cols.length}" style="color:#aaa;">... and ${items.length-max} more</td></tr>`;
-                html += '</tbody></table>';
-                return html;
+            
+            function renderSection(title, items, cols, sectionKey) {
+                if (!items.length) return '';
+                const id = `section-${sectionKey}`;
+                return `<div class="change-section" id="${id}">
+                    <h4 onclick="window.__toggleChangeSection('${id}')">
+                        <span class="section-arrow">▼</span> ${title} (${items.length})
+                    </h4>
+                    <div class="change-table-wrap">
+                        <table class="change-table" id="${id}-table">
+                            <thead><tr>${cols.map((col, idx) => `<th onclick="window.__sortChangeSection('${sectionKey}',${idx})">${col}${window.__changeSortState && window.__changeSortState.section === sectionKey && window.__changeSortState.col === idx ? (window.__changeSortState.asc ? ' ▲' : ' ▼') : ''}</th>`).join('')}</tr></thead>
+                            <tbody>${(function() {
+                                let sortedItems = items;
+                                if (window.__changeSortState && window.__changeSortState.section === sectionKey) {
+                                    const st = window.__changeSortState;
+                                    sortedItems = [...items].sort((a, b) => {
+                                        let va, vb;
+                                        if (cols[0] === 'Name') { va = (a.name || '').toLowerCase(); vb = (b.name || '').toLowerCase(); }
+                                        else if (cols[0] === 'ID') { va = (a.id || '').toLowerCase(); vb = (b.id || '').toLowerCase(); }
+                                        else if (cols[0] === 'Stock Level') { va = a.stockLevel || 0; vb = b.stockLevel || 0; }
+                                        else if (cols[0] === 'Change') { va = a.change || 0; vb = b.change || 0; }
+                                        else if (cols[0] === 'Old Stock') { va = a.oldStock || 0; vb = b.oldStock || 0; }
+                                        else { va = (a.name || '').toLowerCase(); vb = (b.name || '').toLowerCase(); }
+                                        if (va < vb) return st.asc ? -1 : 1;
+                                        if (va > vb) return st.asc ? 1 : -1;
+                                        return 0;
+                                    });
+                                }
+                                return sortedItems.map(item => `<tr>${cols.map(c => {
+                                    if (c === 'Name') return `<td>${escHtml(item.name)}</td>`;
+                                    if (c === 'ID') return `<td>${escHtml(item.id)}</td>`;
+                                    if (c === 'Stock Level') return `<td>${item.stockLevel || 0}</td>`;
+                                    if (c === 'Change') return `<td>${item.change > 0 ? '+' : ''}${item.change}</td>`;
+                                    if (c === 'Old Stock') return `<td>${item.oldStock || 0}</td>`;
+                                    return `<td>${item[c] || ''}</td>`;
+                                }).join('')}</tr>`).join('');
+                            })()}</tbody>
+                        </table>
+                    </div>
+                </div>`;
             }
-            if(report.newSkus.length) body.innerHTML += `<div class="change-section"><h4>🆕 New SKUs (${report.newSkus.length})</h4>${createTable(report.newSkus, ['Name','ID','Stock Level'])}</div>`;
-            if(report.discontinuedSkus.length) body.innerHTML += `<div class="change-section"><h4>❌ Discontinued (${report.discontinuedSkus.length})</h4>${createTable(report.discontinuedSkus, ['Name','ID'])}</div>`;
-            if(report.salesVelocity.length) body.innerHTML += `<div class="change-section"><h4>📉 Top Sales Velocity (${report.salesVelocity.length})</h4>${createTable(report.salesVelocity, ['Name','ID','Old Stock','Stock Level','Change'])}</div>`;
-            if(report.restocked.length) body.innerHTML += `<div class="change-section"><h4>📈 Restocked (${report.restocked.length})</h4>${createTable(report.restocked, ['Name','ID','Old Stock','Stock Level','Change'])}</div>`;
-            if(report.noMovement.length) body.innerHTML += `<div class="change-section"><h4>⏸️ No Movement (${report.noMovement.length})</h4>${createTable(report.noMovement, ['Name','ID','Stock Level'])}</div>`;
+            
+            window.__changeSortState = null;
+            window.__sortChangeSection = function(sectionKey, col) {
+                if (!window.__changeReportData) return;
+                const state = window.__changeSortState;
+                if (state && state.section === sectionKey && state.col === col) {
+                    state.asc = !state.asc;
+                } else {
+                    window.__changeSortState = { section: sectionKey, col: col, asc: true };
+                }
+                renderChangeReport();
+            };
+            window.__toggleChangeSection = function(id) {
+                const section = document.getElementById(id);
+                if (section) section.classList.toggle('collapsed');
+            };
+            
+            if(report.newSkus.length) body.innerHTML += renderSection('🆕 New SKUs', report.newSkus, ['Name','ID','Stock Level'], 'new');
+            if(report.discontinuedSkus.length) body.innerHTML += renderSection('⚠️ No Stock / EOL', report.discontinuedSkus, ['Name','ID'], 'discontinued') + '<div style="color:var(--muted);font-size:0.65rem;margin-top:4px;">Missing in latest upload — may be temporarily out of stock or permanently discontinued.</div>';
+            if(report.salesVelocity.length) body.innerHTML += renderSection('📉 Top Sales Velocity', report.salesVelocity, ['Name','ID','Old Stock','Stock Level','Change'], 'sales');
+            if(report.restocked.length) body.innerHTML += renderSection('📈 Restocked', report.restocked, ['Name','ID','Old Stock','Stock Level','Change'], 'restocked');
+            if(report.noMovement.length) body.innerHTML += renderSection('⏸️ No Movement', report.noMovement, ['Name','ID','Stock Level'], 'nomove');
         }
         
         function renderDashboard() {
@@ -1089,7 +1149,7 @@ ${show.length < filtered.length ? `<div style="color:var(--muted);font-size:0.72
             history.replaceState(null, '', `#${pageName}`);
             if(pageName === 'dashboard') renderDashboard();
             if(pageName === 'inventory') renderInventoryPage();
-            if(pageName === 'reports') { renderRunRate(); renderChangeReport(); }
+            if(pageName === 'reports') { renderChangeReport(); renderRunRate(); } // 先渲染 Change Report，后 Run Rate
         }
         
         window.addEventListener('DOMContentLoaded', () => {
