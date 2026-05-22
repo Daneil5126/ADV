@@ -2,15 +2,19 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
   <title>Business Unit Suite | Unified Dashboard</title>
-  <!-- XLSX loader -->
+  <!-- Inter font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <!-- XLSX loader (v0.20.2) -->
   <script>
     (function () {
       var cdns = [
-        'https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js',
-        'https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js',
-        'https://unpkg.com/xlsx@0.18.5/dist/xlsx.full.min.js'
+        'https://cdn.jsdelivr.net/npm/xlsx@0.20.2/dist/xlsx.full.min.js',
+        'https://unpkg.com/xlsx@0.20.2/dist/xlsx.full.min.js',
+        'https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js'
       ];
       var idx = 0;
       function tryLoad() {
@@ -30,7 +34,7 @@
   <!-- Chart.js & datalabels plugin -->
   <script defer src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
-  <!-- Font Awesome for Sales -->
+  <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
   <style>
     :root {
@@ -81,7 +85,7 @@
     .stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 16px; margin-bottom: 20px; }
     .stat-card, .card, .change-card { background: var(--surface); border: 1px solid rgba(226, 232, 240, 0.8); border-radius: var(--radius); box-shadow: var(--shadow); }
     .stat-card { padding: 14px; }
-    .label { color: var(--muted); font-size: 0.7rem; font-weight: 700; text-transform: uppercase; }
+    .label { color: var(--muted); font-size: 0.72rem; font-weight: 700; text-transform: uppercase; }
     .value { margin-top: 4px; font-size: 1.35rem; font-weight: 700; text-align: left; }
     .grid-3col { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; margin-bottom: 20px; }
     .card, .change-card { padding: 16px; }
@@ -90,7 +94,7 @@
     .summary-table-wrap { flex: 1; min-width: 0; }
     .chart-wrap { width: 150px; height: 150px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; max-width: 40%; }
     .chart-wrap canvas { width: 100% !important; height: 100% !important; }
-    .chart-fallback { display: none; color: var(--muted); font-size: 0.75rem; text-align: center; }
+    .chart-fallback { display: none; color: var(--muted); font-size: 0.72rem; text-align: center; }
     table { width: 100%; border-collapse: collapse; font-size: 0.78rem; }
     th, td { padding: 6px 8px; border-bottom: 1px solid #edf2f7; text-align: left; vertical-align: top; }
     th { background: var(--surface-muted); color: #475569; font-weight: 700; user-select: none; }
@@ -104,7 +108,7 @@
     .margin-bar { justify-content: space-between; }
     .margin-bar label { display: flex; align-items: center; gap: 6px; color: #475569; font-size: 0.85rem; font-weight: 600; }
     .margin-bar input { width: 84px; }
-    .last-updated, .status-msg { color: var(--muted); font-size: 0.75rem; }
+    .last-updated, .status-msg { color: var(--muted); font-size: 0.72rem; }
     .status-msg { min-height: 22px; margin-bottom: 10px; color: #a16207; }
     .pagination { display: flex; justify-content: center; align-items: center; gap: 4px; flex-wrap: wrap; margin-top: 16px; }
     .pagination button { min-width: 36px; border: 1px solid #d8e0ea; border-radius: 4px; padding: 6px 10px; background: white; color: var(--text); cursor: pointer; font-size: 0.8rem; }
@@ -126,7 +130,7 @@
     .change-table { font-size: 0.75rem; }
     .change-table th { cursor: pointer; }
     .change-table th:hover { background: #edf2f9; }
-    .app-credit { margin-top: 10px; color: #94a3b8; font-size: 0.65rem; text-align: right; }
+    .app-credit { margin-top: 10px; color: #94a3b8; font-size: 0.72rem; text-align: right; }
     .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
     .highlight { background-color: #fef08a; color: #854d0e; font-weight: 700; padding: 2px 4px; border-radius: 3px; }
     .calculator { max-width: 580px; width: 100%; background: white; border-radius: 48px; box-shadow: 0 25px 45px -12px rgba(0,0,0,0.25); overflow: hidden; padding: 24px 20px 28px; margin: 0 auto; }
@@ -161,7 +165,7 @@
     .smart-number-input { text-align: right; }
     .radio-group { display: flex; gap: 12px; flex: 1; padding: 6px 0; }
     .radio-group label { background: #f3f9fe; border: 1px solid #dee9f2; padding: 5px 16px; border-radius: 40px; font-size: 0.8rem; display: flex; align-items: center; gap: 6px; cursor: pointer; }
-    .small-hint { background: #e4f3ec; padding: 4px 12px; border-radius: 30px; font-size: 0.65rem; color: #226b49; margin-left: 8px; }
+    .small-hint { background: #e4f3ec; padding: 4px 12px; border-radius: 30px; font-size: 0.68rem; color: #226b49; margin-left: 8px; }
     .result-card { background: #f4f9fe; border-radius: 32px; padding: 16px; margin: 20px 0 12px; }
     .result-line { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #e1ecf5; }
     .final-cost { background: #1e3a2f; border-radius: 28px; padding: 12px 18px; display: flex; justify-content: space-between; align-items: center; margin: 12px 0; }
@@ -174,7 +178,7 @@
     .action-btn { background: #1a2e3f; border: none; color: white; width: 100%; padding: 14px; border-radius: 80px; font-weight: 700; font-size: 0.9rem; margin-top: 12px; cursor: pointer; }
     .error-msg { text-align: center; font-size: 0.7rem; margin-top: 12px; padding: 6px; border-radius: 50px; background: #fff2e6; color: #cb6e2e; min-height: 36px; }
     .footer { font-size: 0.6rem; text-align: center; color: #8da3bb; margin-top: 20px; border-top: 1px solid #eef2f8; padding-top: 12px; }
-    .source-badge { font-size: 0.55rem; background: #e1e9f0; display: inline-block; padding: 2px 6px; border-radius: 20px; margin-top: 4px; }
+    .source-badge { font-size: 0.72rem; background: #e1e9f0; display: inline-block; padding: 2px 6px; border-radius: 20px; margin-top: 4px; }
     .settings-bar { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-bottom: 16px; background: #f1f5f9; padding: 8px 16px; border-radius: 40px; }
     .settings-bar label { display: flex; align-items: center; gap: 6px; font-size: 0.75rem; }
     .loading-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.3); backdrop-filter: blur(2px); z-index: 1000; display: none; align-items: center; justify-content: center; }
@@ -225,7 +229,7 @@
     .sales-dashboard .daily-item .value { font-weight: 700; font-size: 20px; color: #1e293b; }
     .sales-dashboard .content-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 24px; margin-bottom: 24px; }
     .sales-dashboard .card { background: white; border-radius: 24px; border: 1px solid #e2e8f0; padding: 22px; }
-    .sales-dashboard .card-title { font-size: 18px; font-weight: 700; margin-bottom: 20px; }
+    .sales-dashboard .card-title { font-size: 18px; font-weight: 700; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; }
     .sales-dashboard .dual-chart-container { display: flex; flex-direction: column; gap: 30px; }
     .sales-dashboard .chart-item { width: 100%; position: relative; }
     .sales-dashboard .chart-item canvas { max-height: 280px; width: 100%; }
@@ -253,7 +257,7 @@
   </style>
 </head>
 <body>
-  <div id="confirmModal" style="display:none;position:fixed;inset:0;z-index:500;background:rgba(15,23,42,0.5);align-items:center;justify-content:center;">
+  <div id="confirmModal" style="display:none;position:fixed;inset:0;z-index:1100;background:rgba(15,23,42,0.5);align-items:center;justify-content:center;">
     <div style="background:#fff;border-radius:12px;padding:24px 28px;max-width:380px;width:90%;box-shadow:0 20px 40px rgba(0,0,0,0.2);">
       <p id="confirmMsg" style="margin:0 0 20px;font-size:0.95rem;line-height:1.5;color:#263646;"></p>
       <div style="display:flex;gap:10px;justify-content:flex-end;">
@@ -389,7 +393,18 @@
         <div style="overflow-x:auto;">
           <table class="full-table" id="invTable">
             <thead id="invTableHead">
-              <tr><th data-col="0">Name</th><th data-col="1">ID</th><th data-col="2">Location</th><th data-col="3" class="numeric">Available</th><th data-col="4" class="amount">Unit Cost (RM)</th><th data-col="5" class="amount">Landing Cost (RM)</th><th data-col="6" class="amount">Min Sell Price (RM)</th><th data-col="7" class="numeric">Sales Qty</th><th data-col="8" class="numeric">Restock Qty</th><th data-col="9" class="numeric">No Move Days</th></tr>
+              <tr>
+                <th data-col="0">Name <span class="sort-arrow"></span></th>
+                <th data-col="1">ID <span class="sort-arrow"></span></th>
+                <th data-col="2">Location <span class="sort-arrow"></span></th>
+                <th data-col="3" class="numeric">Available <span class="sort-arrow"></span></th>
+                <th data-col="4" class="amount">Unit Cost (RM) <span class="sort-arrow"></span></th>
+                <th data-col="5" class="amount">Landing Cost (RM) <span class="sort-arrow"></span></th>
+                <th data-col="6" class="amount">Min Sell Price (RM) <span class="sort-arrow"></span></th>
+                <th data-col="7" class="numeric">Sales Qty <span class="sort-arrow"></span></th>
+                <th data-col="8" class="numeric">Restock Qty <span class="sort-arrow"></span></th>
+                <th data-col="9" class="numeric">No Move Days <span class="sort-arrow"></span></th>
+              </tr>
             </thead>
             <tbody id="invTableBody"></tbody>
           </table>
@@ -422,7 +437,12 @@
         <div class="kpi-grid" id="salesKpiGrid"></div>
         <div class="content-grid">
           <div class="card">
-            <div class="card-title">Sales Revenue & Agent Performance</div>
+            <div class="card-title">
+              Sales Revenue & Agent Performance
+              <button id="toggleLabelsBtn" style="background: var(--primary); color: white; border: none; padding: 6px 14px; border-radius: 20px; font-size: 0.8rem; cursor: pointer;">
+                <i class="fas fa-eye"></i> Labels
+              </button>
+            </div>
             <div class="dual-chart-container">
               <div class="chart-item"><canvas id="salesChart"></canvas></div>
               <div class="chart-item"><canvas id="agentPerfChart"></canvas></div>
@@ -490,9 +510,29 @@
   </main>
 
   <script>
-    // ========== Inventory Core System ==========
+    // ===== 全局 HTML 转义 =====
+    const escHtml = v => String(v ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    window.escHtml = escHtml;
+
+    // ========== Inventory Core System (包含修复后的饼图 Ctrl 百分比) ==========
     (function() {
       'use strict';
+
+      // Ctrl 控制饼图显示百分比
+      let pieCtrlPressed = false;
+      document.addEventListener('keydown', e => {
+        if (e.key === 'Control' || e.ctrlKey) {
+          pieCtrlPressed = true;
+          if (state.pieChart) state.pieChart.update();
+        }
+      });
+      document.addEventListener('keyup', e => {
+        if (e.key === 'Control' || !e.ctrlKey) {
+          pieCtrlPressed = false;
+          if (state.pieChart) state.pieChart.update();
+        }
+      });
+
       function showConfirm(msg, onOk) {
         const modal = document.getElementById('confirmModal');
         document.getElementById('confirmMsg').textContent = msg;
@@ -505,7 +545,7 @@
       }
       window.showConfirm = showConfirm;
 
-      const STORAGE = { inventory: 'inv_data', lastUpload: 'inv_last_upload', margin: 'inv_margin', changeReport: 'inv_change_report', sidebarOpen: 'app_sidebar_open', lastFileName: 'inv_last_filename', lastSheetName: 'inv_last_sheetname', lowStockThreshold: 'low_stock_threshold', agingThreshold: 'aging_days_threshold', allSheets: 'inv_all_sheets', sstDivisor: 'sst_divisor_inv' };
+      const STORAGE = { inventory: 'inv_data', lastUpload: 'inv_last_upload', margin: 'inv_margin', changeReport: 'inv_change_report', sidebarOpen: 'app_sidebar_open', lastFileName: 'inv_last_filename', lastSheetName: 'inv_last_sheetname', lowStockThreshold: 'low_stock_threshold', agingThreshold: 'aging_days_threshold', allSheets: 'inv_all_sheets', sstDivisor: 'sst_divisor_inv', missingItems: 'inv_missing_items' };
       const CONFIG = { currency: 'RM', currencyCode: 'MYR', defaultSst: 0.95, defaultFreight: 0.97 };
       const DEFAULT_LOW_STOCK = 5;
       const DEFAULT_AGING = 30;
@@ -514,13 +554,13 @@
       const debounce = (fn, ms) => { let t; return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), ms); }; };
       const getLandingSST = () => {
         const inp = document.getElementById('sstInputInv');
-        return inp ? parseFloat(inp.value) || 0.95 : 0.95;
+        const v = inp ? parseFloat(inp.value) : NaN;
+        return (isFinite(v) && v > 0.1 && v <= 1.0) ? v : 0.95;
       };
       const state = { currentPage: 1, pageSize: INITIAL_PAGE_SIZE, sortColumn: -1, sortDirection: 'asc', pieChart: null, clockTimer: null };
       const $ = (s, r = document) => r.querySelector(s);
       const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
       const moneyFormatter = new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-      const escHtml = v => String(v ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
       const toNumber = (v, f=0) => { if(typeof v==='number') return isFinite(v)?v:f; const p = parseFloat(String(v??'').replace(/,/g,'').trim()); return isFinite(p)?p:f; };
       const toInteger = (v, f=0) => { const p = parseInt(String(v??'').replace(/,/g,'').trim(),10); return isFinite(p)?p:f; };
       const formatMoney = v => moneyFormatter.format(toNumber(v));
@@ -568,7 +608,6 @@
       async function fetchFromCloud() {
         setStatus('⏳ Fetching latest inventory from Google Sheets...');
         try {
-          localStorage.removeItem(STORAGE.allSheets);
           const response = await fetch(PUBLISH_URL);
           if (!response.ok) throw new Error(`HTTP ${response.status}`);
           const blob = await response.blob();
@@ -581,7 +620,7 @@
         }
       }
 
-      // ===== RUN RATE ANALYSIS =====
+      // ===== RUN RATE ANALYSIS (完整) =====
       const MONTH_IDX = {jan:0,feb:1,mar:2,apr:3,may:4,jun:5,jul:6,aug:7,sep:8,oct:9,nov:10,dec:11};
       function parseSheetDate(name) {
         const m = String(name).trim().match(/^(\d{1,2})[- ]([A-Za-z]{3})[- ](\d{4})$/i);
@@ -710,7 +749,7 @@
             📊 Run Rate Analysis <span class="arrow" style="transition:transform 0.2s;font-size:0.75rem;">▶</span>
             <span style="font-size:0.7rem;color:var(--muted);text-transform:none;font-weight:400;">Period: ${escHtml(refPeriod)}</span>
           </h3>
-          <div class="change-body" id="rrBody" style="display:block;">
+          <div class="change-body" id="rrBody">
             <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:14px;">
               ${['fast','normal','slow','dead'].map(s => { const sm = SM[s]; return `<div onclick="window.__rrFilter('${s}')" style="background:${sm.bg};border-radius:8px;padding:12px;cursor:pointer;"><div style="font-size:0.68rem;font-weight:700;color:${sm.tc};text-transform:uppercase;margin-bottom:4px;">${sm.label}</div><div style="font-size:1.6rem;font-weight:700;color:${sm.tc};line-height:1;">${counts[s]||0}</div><div style="font-size:0.65rem;color:${sm.tc};margin-top:2px;opacity:0.8;">SKUs</div></div>`; }).join('')}
             </div>
@@ -722,24 +761,11 @@
             <div style="color:var(--muted);font-size:0.68rem;margin-top:8px;">* = 60-day estimate · ∞ = no movement · Days Left = stock ÷ daily run rate · Fast ≥10 units/30d · Normal ≥3</div>
           </div>
         </div>`;
-        if (_rrCollapsed) {
-          const card = document.getElementById('rrCard');
-          const body = document.getElementById('rrBody');
-          const arrow = card?.querySelector('.arrow');
-          if (card) card.classList.remove('open');
-          if (body) body.style.display = 'none';
-          if (arrow) arrow.style.transform = 'rotate(0deg)';
-        }
         window.__rrSort = (col) => { _rrSort.col === col ? (_rrSort.asc = !_rrSort.asc) : (_rrSort.col = col, _rrSort.asc = (col===3||col===4)?false:true); renderRunRate(); };
         window.__rrFilter = (f) => { _rrFilter = f; renderRunRate(); };
         window.__toggleRR = () => {
-          _rrCollapsed = !_rrCollapsed;
           const card = document.getElementById('rrCard');
-          const body = document.getElementById('rrBody');
-          const arrow = card?.querySelector('.arrow');
-          if (!card || !body) return;
-          if (_rrCollapsed) { card.classList.remove('open'); body.style.display = 'none'; if(arrow) arrow.style.transform = 'rotate(0deg)'; }
-          else { card.classList.add('open'); body.style.display = 'block'; if(arrow) arrow.style.transform = 'rotate(90deg)'; }
+          if (card) card.classList.toggle('open');
         };
       }
 
@@ -779,77 +805,227 @@
         setJson(STORAGE.changeReport, report);
         return report;
       }
+
+      // ===== MISSING ITEMS TRACKING =====
+      function updateMissingItems() {
+        const allSheets = getJson(STORAGE.allSheets, {});
+        const dateKeys = Object.keys(allSheets).sort();
+        if (dateKeys.length === 0) {
+          setJson(STORAGE.missingItems, []);
+          return;
+        }
+
+        const latestKey = dateKeys[dateKeys.length - 1];
+        const latestDate = new Date(latestKey + 'T00:00:00');
+
+        const lastSeenMap = new Map();
+        dateKeys.forEach(dateKey => {
+          const sheetDate = new Date(dateKey + 'T00:00:00');
+          const sheetData = allSheets[dateKey];
+          if (sheetData && sheetData.items) {
+            sheetData.items.forEach(item => {
+              const id = String(item.id).trim();
+              if (!id) return;
+              const existing = lastSeenMap.get(id);
+              if (!existing || sheetDate > existing.date) {
+                lastSeenMap.set(id, {
+                  date: sheetDate,
+                  name: item.name || ''
+                });
+              }
+            });
+          }
+        });
+
+        const missingList = [];
+        for (const [id, info] of lastSeenMap.entries()) {
+          if (info.date < latestDate) {
+            const diffTime = latestDate.getTime() - info.date.getTime();
+            const missingDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+            missingList.push({
+              id,
+              name: info.name,
+              lastSeenDate: info.date.toISOString().slice(0, 10),
+              missingDays
+            });
+          }
+        }
+
+        missingList.sort((a, b) => b.missingDays - a.missingDays);
+        setJson(STORAGE.missingItems, missingList);
+
+        if (document.getElementById('page-reports') &&
+            document.getElementById('page-reports').classList.contains('active')) {
+          renderChangeReport();
+        }
+      }
+
+      let _missingFilter = 'all';
+      let _missingSort = { col: '', asc: true };
+
+      function buildMissingItemsHTML(missingItems) {
+        const itemsWithStatus = missingItems.map(item => {
+          const days = item.missingDays;
+          let status;
+          if (days < 30) status = '⚠️ No Stock';
+          else if (days < 60) status = '🔸 EOL';
+          else status = '❌ Discontinued';
+          return { ...item, status };
+        });
+
+        const counts = itemsWithStatus.reduce((acc, i) => {
+          acc[i.status] = (acc[i.status] || 0) + 1;
+          return acc;
+        }, {});
+        const summary = Object.entries(counts).map(([k, v]) => `${k} (${v})`).join(', ');
+
+        let html = `<div class="change-card open" id="missingCard">
+          <h3 onclick="this.parentElement.classList.toggle('open')">
+            📉 Missing Items Tracking <span class="arrow">▶</span>
+            <span style="font-size:0.7rem;color:#888;">${summary}</span>
+          </h3>
+          <div class="change-body" id="missingBody">
+            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;">
+              <button onclick="window.__filterMissing('all')" style="border:1px solid #d8e0ea; border-radius:20px; padding:4px 12px; font-size:0.75rem; cursor:pointer; background:${_missingFilter==='all'?'var(--primary)':'white'}; color:${_missingFilter==='all'?'white':'var(--text)'};">All</button>
+              <button onclick="window.__filterMissing('⚠️ No Stock')" style="border:1px solid #d8e0ea; border-radius:20px; padding:4px 12px; font-size:0.75rem; cursor:pointer; background:${_missingFilter==='⚠️ No Stock'?'#fef08a':'white'}; color:${_missingFilter==='⚠️ No Stock'?'#854d0e':'var(--text)'};">⚠️ No Stock (${counts['⚠️ No Stock']||0})</button>
+              <button onclick="window.__filterMissing('🔸 EOL')" style="border:1px solid #d8e0ea; border-radius:20px; padding:4px 12px; font-size:0.75rem; cursor:pointer; background:${_missingFilter==='🔸 EOL'?'#fed7aa':'white'}; color:${_missingFilter==='🔸 EOL'?'#9a3412':'var(--text)'};">🔸 EOL (${counts['🔸 EOL']||0})</button>
+              <button onclick="window.__filterMissing('❌ Discontinued')" style="border:1px solid #d8e0ea; border-radius:20px; padding:4px 12px; font-size:0.75rem; cursor:pointer; background:${_missingFilter==='❌ Discontinued'?'#fecaca':'white'}; color:${_missingFilter==='❌ Discontinued'?'#991b1b':'var(--text)'};">❌ Discontinued (${counts['❌ Discontinued']||0})</button>
+            </div>
+            <div style="overflow-x:auto;">
+              <table class="full-table" style="font-size:0.77rem;">
+                <thead><tr>
+                  <th onclick="window.__sortMissing('name')">Name ${_missingSort.col==='name' ? (_missingSort.asc ? '▲' : '▼') : ''}</th>
+                  <th onclick="window.__sortMissing('id')">SKU ${_missingSort.col==='id' ? (_missingSort.asc ? '▲' : '▼') : ''}</th>
+                  <th onclick="window.__sortMissing('lastSeenDate')">Last Seen Date ${_missingSort.col==='lastSeenDate' ? (_missingSort.asc ? '▲' : '▼') : ''}</th>
+                  <th onclick="window.__sortMissing('missingDays')">Days Missing ${_missingSort.col==='missingDays' ? (_missingSort.asc ? '▲' : '▼') : ''}</th>
+                  <th>Status</th>
+                </tr></thead>
+                <tbody>`;
+
+        let filtered = _missingFilter === 'all' ? itemsWithStatus : itemsWithStatus.filter(i => i.status === _missingFilter);
+        if (_missingSort.col) {
+          filtered.sort((a, b) => {
+            let va = a[_missingSort.col], vb = b[_missingSort.col];
+            if (typeof va === 'string') va = va.toLowerCase();
+            if (typeof vb === 'string') vb = vb.toLowerCase();
+            return _missingSort.asc ? (va > vb ? 1 : -1) : (va < vb ? 1 : -1);
+          });
+        }
+
+        filtered.forEach(item => {
+          const lastSeenFormatted = new Date(item.lastSeenDate + 'T00:00:00').toLocaleDateString();
+          html += `<tr>
+            <td>${escHtml(item.name)}</td>
+            <td>${escHtml(item.id)}</td>
+            <td>${lastSeenFormatted}</td>
+            <td class="numeric">${item.missingDays}</td>
+            <td><span style="background:${item.status==='⚠️ No Stock'?'#fef08a':item.status==='🔸 EOL'?'#fed7aa':'#fecaca'};color:${item.status==='⚠️ No Stock'?'#854d0e':item.status==='🔸 EOL'?'#9a3412':'#991b1b'};padding:2px 8px;border-radius:20px;font-size:0.68rem;font-weight:700;">${item.status}</span></td>
+          </tr>`;
+        });
+
+        html += `</tbody></table></div>
+          <div style="color:var(--muted);font-size:0.68rem;margin-top:8px;">Missing days = days since last appearance in any dated sheet. Updated automatically on each upload.</div>
+        </div></div>`;
+        return html;
+      }
+
+      window.__filterMissing = (status) => {
+        _missingFilter = status;
+        renderChangeReport();
+      };
+      window.__sortMissing = (col) => {
+        if (_missingSort.col === col) _missingSort.asc = !_missingSort.asc;
+        else { _missingSort.col = col; _missingSort.asc = true; }
+        renderChangeReport();
+      };
+
       function renderChangeReport() {
         const report = getJson(STORAGE.changeReport, null);
         const container = $('#changeReportContainer');
+        let html = '';
+
         if(!report || (!report.newSkus.length && !report.discontinuedSkus.length && !report.salesVelocity.length && !report.restocked.length)) {
-          container.innerHTML = '<div class="change-card"><h3>📈 No changes detected since last upload</h3><div class="change-summary">Upload a new file to compare with previous data.</div></div>';
-          return;
-        }
-        window.__changeReportData = report;
-        const parts = [];
-        if(report.newSkus.length) parts.push(`${report.newSkus.length} new`);
-        if(report.discontinuedSkus.length) parts.push(`${report.discontinuedSkus.length} no stock / EOL`);
-        if(report.salesVelocity.length) parts.push(`${report.salesVelocity.length} sold`);
-        if(report.noMovement.length) parts.push(`${report.noMovement.length} no movement`);
-        if(report.restocked.length) parts.push(`${report.restocked.length} restocked`);
-        container.innerHTML = `<div class="change-card open" id="changeCard">
-          <h3 onclick="this.parentElement.classList.toggle('open')">📈 Inventory Change Report <span class="arrow">▶</span> <span style="font-size:0.7rem;color:#888;">${parts.join(', ')}</span></h3>
-          <div class="change-body" id="changeBody"></div>
-        </div>`;
-        const body = $('#changeBody');
-        function renderSection(title, items, cols, sectionKey) {
-          if (!items.length) return '';
-          const id = `section-${sectionKey}`;
-          return `<div class="change-section" id="${id}">
-            <h4 onclick="window.__toggleChangeSection('${id}')"><span class="section-arrow">▼</span> ${title} (${items.length})</h4>
-            <div class="change-table-wrap">
-              <table class="change-table" id="${id}-table"><thead><tr>${cols.map((col, idx) => `<th onclick="window.__sortChangeSection('${sectionKey}',${idx})">${col}${window.__changeSortState && window.__changeSortState.section===sectionKey && window.__changeSortState.col===idx ? (window.__changeSortState.asc ? ' ▲' : ' ▼') : ''}</th>`).join('')}</tr></thead><tbody>${(function(){
-                let sorted = items;
-                if(window.__changeSortState && window.__changeSortState.section===sectionKey) {
-                  const st = window.__changeSortState;
-                  sorted = [...items].sort((a,b)=>{
-                    let va,vb;
-                    if(cols[0]==='Name') { va=(a.name||'').toLowerCase(); vb=(b.name||'').toLowerCase(); }
-                    else if(cols[0]==='ID') { va=(a.id||'').toLowerCase(); vb=(b.id||'').toLowerCase(); }
-                    else if(cols[0]==='Stock Level') { va=a.stockLevel||0; vb=b.stockLevel||0; }
-                    else if(cols[0]==='Change') { va=a.change||0; vb=b.change||0; }
-                    else if(cols[0]==='Old Stock') { va=a.oldStock||0; vb=b.oldStock||0; }
-                    else { va=(a.name||'').toLowerCase(); vb=(b.name||'').toLowerCase(); }
-                    if(va<vb) return st.asc?-1:1;
-                    if(va>vb) return st.asc?1:-1;
-                    return 0;
-                  });
-                }
-                return sorted.map(item => `<tr>${cols.map(c => {
-                  if(c==='Name') return `<td>${escHtml(item.name)}</td>`;
-                  if(c==='ID') return `<td>${escHtml(item.id)}</td>`;
-                  if(c==='Stock Level') return `<td>${item.stockLevel||0}</td>`;
-                  if(c==='Change') return `<td>${item.change>0?'+':''}${item.change}</td>`;
-                  if(c==='Old Stock') return `<td>${item.oldStock||0}</td>`;
-                  return `<td>${item[c]||''}</td>`;
-                }).join('')}</tr>`).join('');
-              })()}</tbody></table>
-            </div>
+          html += '<div class="change-card"><h3>📈 No changes detected since last upload</h3><div class="change-summary">Upload a new file to compare with previous data.</div></div>';
+        } else {
+          window.__changeReportData = report;
+          const parts = [];
+          if(report.newSkus.length) parts.push(`${report.newSkus.length} new`);
+          if(report.discontinuedSkus.length) parts.push(`${report.discontinuedSkus.length} no stock / EOL`);
+          if(report.salesVelocity.length) parts.push(`${report.salesVelocity.length} sold`);
+          if(report.noMovement.length) parts.push(`${report.noMovement.length} no movement`);
+          if(report.restocked.length) parts.push(`${report.restocked.length} restocked`);
+          html += `<div class="change-card open" id="changeCard">
+            <h3 onclick="this.parentElement.classList.toggle('open')">📈 Inventory Change Report <span class="arrow">▶</span> <span style="font-size:0.7rem;color:#888;">${parts.join(', ')}</span></h3>
+            <div class="change-body" id="changeBody"></div>
           </div>`;
         }
-        window.__changeSortState = null;
-        window.__sortChangeSection = function(sectionKey, col) {
-          if(!window.__changeReportData) return;
-          const st = window.__changeSortState;
-          if(st && st.section===sectionKey && st.col===col) { st.asc = !st.asc; }
-          else { window.__changeSortState = {section:sectionKey, col, asc:true}; }
-          renderChangeReport();
-        };
-        window.__toggleChangeSection = function(id) {
-          const section = document.getElementById(id);
-          if(section) section.classList.toggle('collapsed');
-        };
-        if(report.newSkus.length) body.innerHTML += renderSection('🆕 New SKUs', report.newSkus, ['Name','ID','Stock Level'], 'new');
-        if(report.discontinuedSkus.length) body.innerHTML += renderSection('⚠️ No Stock / EOL', report.discontinuedSkus, ['Name','ID'], 'discontinued') + '<div style="color:var(--muted);font-size:0.65rem;margin-top:4px;">Missing in latest upload — may be temporarily out of stock or permanently discontinued.</div>';
-        if(report.salesVelocity.length) body.innerHTML += renderSection('📉 Top Sales Velocity', report.salesVelocity, ['Name','ID','Old Stock','Stock Level','Change'], 'sales');
-        if(report.restocked.length) body.innerHTML += renderSection('📈 Restocked', report.restocked, ['Name','ID','Old Stock','Stock Level','Change'], 'restocked');
-        if(report.noMovement.length) body.innerHTML += renderSection('⏸️ No Movement', report.noMovement, ['Name','ID','Stock Level'], 'nomove');
+
+        const missingItems = getJson(STORAGE.missingItems, []);
+        if (missingItems.length > 0) {
+          html += buildMissingItemsHTML(missingItems);
+        } else {
+          html += '<div class="change-card"><h3>📉 Missing Items Tracking</h3><div class="change-summary">No SKUs are currently missing.</div></div>';
+        }
+
+        container.innerHTML = html;
+
+        if (report && (report.newSkus.length || report.discontinuedSkus.length || report.salesVelocity.length || report.restocked.length)) {
+          const body = $('#changeBody');
+          if (body) {
+            function renderSection(title, items, cols, sectionKey) {
+              if (!items.length) return '';
+              const id = `section-${sectionKey}`;
+              return `<div class="change-section" id="${id}">
+                <h4 onclick="window.__toggleChangeSection('${id}')"><span class="section-arrow">▼</span> ${title} (${items.length})</h4>
+                <div class="change-table-wrap">
+                  <table class="change-table" id="${id}-table"><thead><tr>${cols.map((col, idx) => `<th onclick="window.__sortChangeSection('${sectionKey}',${idx})">${col}${window.__changeSortState && window.__changeSortState.section===sectionKey && window.__changeSortState.col===idx ? (window.__changeSortState.asc ? ' ▲' : ' ▼') : ''}</th>`).join('')}</tr></thead><tbody>${(function(){
+                    let sorted = items;
+                    if(window.__changeSortState && window.__changeSortState.section===sectionKey) {
+                      const st = window.__changeSortState;
+                      sorted = [...items].sort((a,b)=>{
+                        let va,vb;
+                        if(cols[0]==='Name') { va=(a.name||'').toLowerCase(); vb=(b.name||'').toLowerCase(); }
+                        else if(cols[0]==='ID') { va=(a.id||'').toLowerCase(); vb=(b.id||'').toLowerCase(); }
+                        else if(cols[0]==='Stock Level') { va=a.stockLevel||0; vb=b.stockLevel||0; }
+                        else if(cols[0]==='Change') { va=a.change||0; vb=b.change||0; }
+                        else if(cols[0]==='Old Stock') { va=a.oldStock||0; vb=b.oldStock||0; }
+                        else { va=(a.name||'').toLowerCase(); vb=(b.name||'').toLowerCase(); }
+                        if(va<vb) return st.asc?-1:1;
+                        if(va>vb) return st.asc?1:-1;
+                        return 0;
+                      });
+                    }
+                    return sorted.map(item => `<tr>${cols.map(c => {
+                      if(c==='Name') return `<td>${escHtml(item.name)}</td>`;
+                      if(c==='ID') return `<td>${escHtml(item.id)}</td>`;
+                      if(c==='Stock Level') return `<td>${item.stockLevel||0}</td>`;
+                      if(c==='Change') return `<td>${item.change>0?'+':''}${item.change}</td>`;
+                      if(c==='Old Stock') return `<td>${item.oldStock||0}</td>`;
+                      return `<td>${item[c]||''}</td>`;
+                    }).join('')}</tr>`).join('');
+                  })()}</tbody></table>
+                </div>
+              </div>`;
+            }
+            window.__changeSortState = null;
+            window.__sortChangeSection = function(sectionKey, col) {
+              if(!window.__changeReportData) return;
+              const st = window.__changeSortState;
+              if(st && st.section===sectionKey && st.col===col) { st.asc = !st.asc; }
+              else { window.__changeSortState = {section:sectionKey, col, asc:true}; }
+              renderChangeReport();
+            };
+            window.__toggleChangeSection = function(id) {
+              const section = document.getElementById(id);
+              if(section) section.classList.toggle('collapsed');
+            };
+            if(report.newSkus.length) body.innerHTML += renderSection('🆕 New SKUs', report.newSkus, ['Name','ID','Stock Level'], 'new');
+            if(report.discontinuedSkus.length) body.innerHTML += renderSection('⚠️ No Stock / EOL', report.discontinuedSkus, ['Name','ID'], 'discontinued') + '<div style="color:var(--muted);font-size:0.65rem;margin-top:4px;">Missing in latest upload — may be temporarily out of stock or permanently discontinued.</div>';
+            if(report.salesVelocity.length) body.innerHTML += renderSection('📉 Top Sales Velocity', report.salesVelocity, ['Name','ID','Old Stock','Stock Level','Change'], 'sales');
+            if(report.restocked.length) body.innerHTML += renderSection('📈 Restocked', report.restocked, ['Name','ID','Old Stock','Stock Level','Change'], 'restocked');
+            if(report.noMovement.length) body.innerHTML += renderSection('⏸️ No Movement', report.noMovement, ['Name','ID','Stock Level'], 'nomove');
+          }
+        }
       }
       
       function renderDashboard() {
@@ -887,19 +1063,76 @@
         let idx = 0;
         return labels.map(l => fixed[l] || fallback[idx++ % fallback.length]);
       }
+
+      // ===== 修复后的 renderPieChart：Ctrl 显示百分比（display 改为函数） =====
       function renderPieChart(sorted, colors) {
         const canvas = $('#pieChart'), fallback = $('#chartFallback');
-        if(state.pieChart) { state.pieChart.destroy(); state.pieChart = null; }
-        if(!sorted.length) { if(canvas) canvas.style.display = 'none'; if(fallback) fallback.style.display = 'none'; return; }
-        if(!window.Chart) { if(canvas) canvas.style.display = 'none'; if(fallback) fallback.style.display = 'block'; return; }
-        if(canvas) canvas.style.display = 'block';
-        if(fallback) fallback.style.display = 'none';
+        if (state.pieChart) { state.pieChart.destroy(); state.pieChart = null; }
+        if (!sorted.length) {
+          if (canvas) canvas.style.display = 'none';
+          if (fallback) fallback.style.display = 'none';
+          return;
+        }
+        if (!window.Chart) {
+          if (canvas) canvas.style.display = 'none';
+          if (fallback) fallback.style.display = 'block';
+          return;
+        }
+        if (window.Chart && window.ChartDataLabels) {
+          Chart.register(ChartDataLabels);
+        }
+        if (canvas) canvas.style.display = 'block';
+        if (fallback) fallback.style.display = 'none';
+
         state.pieChart = new Chart(canvas.getContext('2d'), {
           type: 'pie',
-          data: { labels: sorted.map(([l])=>l), datasets: [{ data: sorted.map(([,v])=>v), backgroundColor: colors, borderColor: '#fff', borderWidth: 2 }] },
-          options: { responsive: true, maintainAspectRatio: true, plugins: { legend: { display: false } } }
+          data: {
+            labels: sorted.map(([l]) => l),
+            datasets: [{
+              data: sorted.map(([, v]) => v),
+              backgroundColor: colors,
+              borderColor: '#fff',
+              borderWidth: 2
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+              legend: { display: false },
+              tooltip: {
+                callbacks: {
+                  label: (ctx) => {
+                    const label = ctx.label || '';
+                    const value = ctx.parsed;
+                    const total = ctx.dataset.data.reduce((a, b) => a + b, 0);
+                    const pct = ((value / total) * 100).toFixed(1);
+                    return `${label}: ${pct}%`;
+                  }
+                }
+              },
+              datalabels: {
+                display: () => pieCtrlPressed,   // ★ 修复：使用函数动态读取 Ctrl 状态
+                color: '#1e293b',
+                backgroundColor: 'rgba(255,255,255,0.7)',
+                borderRadius: 8,
+                padding: 6,
+                font: { weight: 'bold', size: 11 },
+                formatter: (value, ctx) => {
+                  const label = ctx.chart.data.labels[ctx.dataIndex];
+                  const total = ctx.dataset.data.reduce((a, b) => a + b, 0);
+                  const pct = ((value / total) * 100).toFixed(1);
+                  return `${label}\n${pct}%`;
+                },
+                anchor: 'center',
+                align: 'center',
+                offset: 0
+              }
+            }
+          }
         });
       }
+
       function renderMiniTable(selector, items, keys, empty, tableId) {
         const body = document.querySelector(selector + ' tbody');
         const headRow = document.querySelector(selector + ' thead tr');
@@ -1088,6 +1321,12 @@
               if (!latestDateObj || d > latestDateObj) { latestDateObj = d; latestDateSheetName = sn; }
             }
           });
+          const MAX_SNAPSHOTS = 60;
+          const allKeys = Object.keys(allSheetsData).sort();
+          if (allKeys.length > MAX_SNAPSHOTS) {
+            allKeys.slice(0, allKeys.length - MAX_SNAPSHOTS)
+                   .forEach(k => delete allSheetsData[k]);
+          }
           if (Object.keys(allSheetsData).length) setJson(STORAGE.allSheets, allSheetsData);
           const sheetName = latestDateSheetName || wb.SheetNames[0] || 'Sheet1';
           const sheet = wb.Sheets[sheetName];
@@ -1125,6 +1364,7 @@
           if(newItems.length===0) throw new Error('No valid rows found');
           saveInventory(newItems);
           generateChangeReport(oldData, newItems);
+          updateMissingItems();
           localStorage.setItem(STORAGE.lastUpload, new Date().toISOString());
           localStorage.setItem(STORAGE.lastFileName, file.name);
           localStorage.setItem(STORAGE.lastSheetName, sheetName);
@@ -1203,7 +1443,7 @@
         $('#exportBtn').addEventListener('click', exportToExcel);
         $('#clearInventoryBtn').addEventListener('click', () => { 
           showConfirm('Clear all inventory data? This cannot be undone.', () => {
-            localStorage.removeItem(STORAGE.inventory); localStorage.removeItem(STORAGE.changeReport); localStorage.removeItem(STORAGE.allSheets); localStorage.removeItem(STORAGE.lastUpload); localStorage.removeItem(STORAGE.lastFileName); localStorage.removeItem(STORAGE.lastSheetName);
+            localStorage.removeItem(STORAGE.inventory); localStorage.removeItem(STORAGE.changeReport); localStorage.removeItem(STORAGE.allSheets); localStorage.removeItem(STORAGE.missingItems); localStorage.removeItem(STORAGE.lastUpload); localStorage.removeItem(STORAGE.lastFileName); localStorage.removeItem(STORAGE.lastSheetName);
             setStatus('Data cleared'); renderDashboard(); renderInventoryPage();
             if($('#page-reports').classList.contains('active')) { renderRunRate(); renderChangeReport(); }
           });
@@ -1232,7 +1472,7 @@
       });
     })();
 
-    // ========== Product Calculator v6.6 Final ==========
+    // ========== Product Calculator (完整) ==========
     (function() {
       const langMap = {
         cn: { mainTitle:"Product Calculator", versionText:" v6.6", liveLabel:"USD/MYR 基准汇率", plusLabel:"➕ 额外加成", appliedRateLabel:"💱 最终应用汇率 (基准+加成) :", formulaLabel:"📐 公式：", formulaCode:"Landing Cost = FOB ÷ SST × 汇率 ÷ Freight ÷ GP", fobLabel:"💰 FOB (USD)", sstLabel:"🧾 SST/VAT Tax", sstOpt1:"0.95 (5%)", sstOpt2:"0.90 (10%)", freightLabel:"🚢 Freight (除数)", gpLabel:"📈 GP% 除数", priceLabel:"🏷️ 预期售价 (MYR)", step1Label:"FOB ÷ SST (USD) :", step2Label:"× 汇率后 :", step3Label:"÷ Freight :", landingLabel:"📦 Landing Cost (向上取整)", gpLabelText:"📊 毛利率 (基于售价)", profitLabel:"💵 毛利额 :", clearText:"一键清除", errorGp:"❌ GP% 除数不能为0或负数", errorFreight:"❌ Freight 除数不能为0或负数", errorDiv:"❌ 除数不能为零", errorRate:"❌ 应用汇率无效 (≤0)", fetchErr:"⚠️ 网络失败，使用本地存储汇率", clearOk:"✅ 已重置所有输入", loading:"获取中...", datePrefix:"📅 ", marketRate:"在线汇率", cacheMsg:"📦 使用本地存储汇率", refreshBtn:"🔄 刷新汇率", freightHintPrefix:"增加成本 ≈ ", gpHintPrefix:"毛利率 ≈ ", percent:"%", manualLabel:"✏️ 手动输入汇率 (MYR/USD)", manualNote:"离线时可用，将覆盖自动获取值", applyManual:"📌 应用并保存", resetAuto:"🔄 恢复自动汇率", sourceManual:"✏️ 手动设定", versionInfo:"💡 提示：汇率会自动", poweredBy:"Powered By Daneil.G.CS | 智能识别版 v6.6", confirmRefresh:"当前处于手动汇率模式，刷新将覆盖手动设定。确定要继续吗？" },
@@ -1249,6 +1489,7 @@
         profitSpan: document.getElementById('profitAmount'), gpCard: document.getElementById('gpCard'), warningIcon: document.getElementById('warningIcon'),
         errorDiv: document.getElementById('errorMsg'), datetimeSpan: document.getElementById('datetimeDisplay'), sourceHintSpan: document.getElementById('sourceHint'),
         manualRateInput: document.getElementById('manualRateInput'), applyManualBtn: document.getElementById('applyManualBtn'), resetAutoBtn: document.getElementById('resetAutoBtn'),
+        freightHintSpan: document.getElementById('freightHint'), gpHintSpan: document.getElementById('gpHint')
       };
       let currentBaseRate = 3.97, lastSystemError = '', autoRefreshTimer = null;
 
@@ -1339,15 +1580,25 @@
       (async function init(){ loadStoredRate(); updateUI(); await refreshRateAndUI(); compute(); updateFreightHint(); updateGpHint(); if(autoRefreshTimer) clearInterval(autoRefreshTimer); autoRefreshTimer=setInterval(async ()=>{ const calcPage=document.getElementById('page-calculator'); if(!calcPage||!calcPage.classList.contains('active')) return; const activeEl=document.activeElement; const isEditing=activeEl===els.fobInput||activeEl===els.sellingPrice||activeEl===els.markupInput||activeEl===els.freightInput||activeEl===els.gpInput; if(!isEditing&&!localStorage.getItem('manualBaseRate')) await refreshRateAndUI(); },10*60*1000); setInterval(()=>{ els.datetimeSpan.innerText=new Date().toLocaleString(curLang==='cn'?'zh-CN':'en-US',{year:'numeric',month:'short',day:'numeric',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:true}); },1000); })();
     })();
 
-    // ========== Sales Dashboard Module (with Agent Code column) ==========
+    // ========== Sales Dashboard Module (完整) ==========
     (function() {
       const DEFAULT_SYNC_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTTUlfv03e1X_g1MoUIrVKUfQtv8A0HjktG-XPD4L6w_3uXSq_pj3OnxfRT4c33JQ/pub?output=xlsx";
+      const SALES_STORAGE = 'sales_rawData';
+      const MAX_TRANSACTIONS = 10000;
+
       let rawData = [];
       let monthlyTarget = 0;
       let lastUpdateDate = null;
-      let agentNameMap = { "B003":"Vivien","B008":"Nicole","B005":"Jacky","B007":"Edmund" };
+      let agentNameMap = JSON.parse(localStorage.getItem('sal_agentNameMap') || 'null')
+        || { "B003":"Vivien","B008":"Nicole","B005":"Jacky","B007":"Edmund" };
       let fixedTargetMap = { "B003":2500000,"B008":1500000,"B005":1500000,"B007":500000 };
-      let agentTargetOverride = new Map();
+      let agentTargetOverride;
+      try {
+        const savedOverride = JSON.parse(localStorage.getItem('sal_agentTargetOverride') || 'null');
+        agentTargetOverride = savedOverride ? new Map(savedOverride) : new Map();
+      } catch(e) {
+        agentTargetOverride = new Map();
+      }
       let agentSortColumn = 'revenue', agentSortDirection = 'desc';
       let dealerSortColumn = 'qtd', dealerSortDirection = 'desc';
       let salesChart = null, agentChart = null;
@@ -1357,6 +1608,53 @@
       const $$s = (sel) => Array.from(document.querySelectorAll(sel));
       const formatRM = v => new Intl.NumberFormat('en-MY',{style:'currency',currency:'MYR',minimumFractionDigits:2}).format(v||0);
 
+      function loadSalesData() {
+        try {
+          const saved = localStorage.getItem(SALES_STORAGE);
+          if (saved) {
+            const parsed = JSON.parse(saved);
+            if (Array.isArray(parsed)) {
+              rawData = parsed.map(r => ({ ...r, date: new Date(r.date) }));
+              if (rawData.length) {
+                lastUpdateDate = new Date(Math.max(...rawData.map(r => r.date.getTime())));
+                document.getElementById('sales-lastUpdateTimeDisplay').innerText = lastUpdateDate.toLocaleDateString();
+              }
+              const savedTarget = localStorage.getItem('sal_monthlyTarget');
+              monthlyTarget = savedTarget ? parseFloat(savedTarget) : 0;
+              if (!monthlyTarget && rawData.length) {
+                const maxDate = new Date(Math.max(...rawData.map(r => r.date.getTime())));
+                const ly = maxDate.getFullYear(), lm = maxDate.getMonth();
+                const currentMonthSales = rawData.filter(t => t.date.getFullYear() === ly && t.date.getMonth() === lm).reduce((s,t) => s + t.subtotal, 0);
+                monthlyTarget = currentMonthSales * 1.2;
+              }
+              return true;
+            }
+          }
+        } catch (e) { /* ignore */ }
+        return false;
+      }
+
+      function saveSalesData() {
+        if (!rawData.length) return;
+        let dataToSave = rawData;
+        if (dataToSave.length > MAX_TRANSACTIONS) {
+          dataToSave = dataToSave.slice(dataToSave.length - MAX_TRANSACTIONS);
+          rawData = dataToSave;
+        }
+        try {
+          localStorage.setItem(SALES_STORAGE, JSON.stringify(dataToSave));
+        } catch (e) {
+          console.warn('Sales data could not be saved (storage full)');
+        }
+      }
+
+      const hasSavedData = loadSalesData();
+
+      const setSalesStatus = (msg) => {
+        const el = document.getElementById('sales-syncStatusMsg');
+        if (el) el.textContent = msg;
+      };
+
       function parseExcelDate(val) {
         if(!val) return null;
         if(typeof val==='number' && val>30000 && val<100000) { let d=XLSX.SSF.parse_date_code(val); if(d) return new Date(d.y,d.m-1,d.d); }
@@ -1364,6 +1662,7 @@
         let parts=s.split(/[-/]/); if(parts.length===3) { let y=parseInt(parts[0]),m=parseInt(parts[1]),day=parseInt(parts[2]); if(!isNaN(y)&&!isNaN(m)&&!isNaN(day)) { if(y>2000) return new Date(y,m-1,day); if(y<100) return new Date(2000+y,m-1,day); } }
         return null;
       }
+
       function getLast3MonthsRevenue() {
         if(rawData.length===0) return 0;
         let maxDate=new Date(0); rawData.forEach(t=>{ if(t.date>maxDate) maxDate=t.date; });
@@ -1371,80 +1670,131 @@
         for(let i=1;i<=3;i++) { let m=cm-i, y=cy; if(m<0){m+=12;y--;} rawData.forEach(t=>{ if(t.date.getFullYear()===y&&t.date.getMonth()===m) total+=t.subtotal; }); }
         return total;
       }
+
       function processRows(rows) {
         function normalize(s){ return (s||'').toString().trim().toLowerCase(); }
         let headerRowIdx=-1;
         for(let i=0;i<Math.min(rows.length,25);i++){ let row=rows[i].map(normalize); if(row.some(c=>c.includes('company')||c.includes('dealer'))&&row.some(c=>c.includes('sub total')||c.includes('amount')||c.includes('sales')||c.includes('revenue'))){headerRowIdx=i;break;} }
-        if(headerRowIdx===-1){alert("Cannot detect header row.");return;}
+        if(headerRowIdx===-1) throw new Error("Cannot detect header row.");
         let headers=rows[headerRowIdx].map(normalize);
         function findCol(keywords){return headers.findIndex(h=>keywords.some(k=>h.includes(k)));}
         const idxAgent=findCol(['sales agent','agent']), idxSalesman=findCol(['salesman','saleman','staff','name']), idxCompany=findCol(['company name','company','dealer']), idxDate=findCol(['date','invoice date']), idxQty=findCol(['qty','quantity']), idxSubtotal=findCol(['sub total','subtotal','amount','sales amount','total sales','sale total','total','销售额']), idxMargin=findCol(['profit margin (%)','profit margin','margin','利润率']), idxProfit=findCol(['local profit','profit']);
-        if(idxCompany===-1||idxSubtotal===-1){alert("Missing Company or Sub Total column");return;}
+        if(idxCompany===-1||idxSubtotal===-1) throw new Error("Missing Company or Sub Total column");
         let lastAgent="",lastCompany="",lastSalesman="", transactions=[];
-        for(let i=headerRowIdx+1;i<rows.length;i++){ let row=rows[i]; if(!row||row.length===0) continue; let companyRaw=row[idxCompany]?row[idxCompany].toString().trim():""; let company=companyRaw; if(company===""&&lastCompany!=="") company=lastCompany; if(company!=="") lastCompany=company; if(company==="") continue; let subtotal=parseFloat(row[idxSubtotal])||0; if(subtotal===0) continue; let rawItem=(idxAgent>=0&&row[idxAgent])?row[idxAgent].toString().trim():""; if(companyRaw===""&&rawItem===""&&row[idxSubtotal]!==undefined) continue; let qty=parseFloat(row[idxQty])||0, margin=(idxMargin>=0)?parseFloat(row[idxMargin]):0, profit=(idxProfit>=0)?parseFloat(row[idxProfit]):0; if(isNaN(margin)) margin=0; if(isNaN(profit)) profit=0; let agent=(idxAgent>=0&&row[idxAgent])?row[idxAgent].toString().trim():""; let salesman=(idxSalesman>=0&&row[idxSalesman])?row[idxSalesman].toString().trim():""; if(agent===""&&lastAgent!=="") agent=lastAgent; if(salesman===""&&lastSalesman!=="") salesman=lastSalesman; if(agent!=="") lastAgent=agent; if(salesman!=="") lastSalesman=salesman; let finalAgent=agent||salesman||"Unknown"; let rawDate=(idxDate>=0&&row[idxDate])?row[idxDate]:null; let date=parseExcelDate(rawDate); if(!date) continue; transactions.push({agent:finalAgent,agentCode:agent,salesman:salesman,company:company,subtotal,qty,margin,profit,date}); }
-        if(transactions.length===0){alert("No valid transactions found");return;}
+        for(let i=headerRowIdx+1;i<rows.length;i++){ let row=rows[i]; if(!row||row.length===0) continue; let companyRaw=row[idxCompany]?row[idxCompany].toString().trim():""; let company=companyRaw; if(company==""&&lastCompany!="") company=lastCompany; if(company!="") lastCompany=company; if(company=="") continue; let subtotal=parseFloat(row[idxSubtotal])||0; if(subtotal===0) continue; let rawItem=(idxAgent>=0&&row[idxAgent])?row[idxAgent].toString().trim():""; if(companyRaw==""&&rawItem==""&&row[idxSubtotal]!==undefined) continue; let qty=parseFloat(row[idxQty])||0, margin=(idxMargin>=0)?parseFloat(row[idxMargin]):0, profit=(idxProfit>=0)?parseFloat(row[idxProfit]):0; if(isNaN(margin)) margin=0; if(isNaN(profit)) profit=0; let agent=(idxAgent>=0&&row[idxAgent])?row[idxAgent].toString().trim():""; let salesman=(idxSalesman>=0&&row[idxSalesman])?row[idxSalesman].toString().trim():""; if(agent==""&&lastAgent!="") agent=lastAgent; if(salesman==""&&lastSalesman!="") salesman=lastSalesman; if(agent!="") lastAgent=agent; if(salesman!="") lastSalesman=salesman; let finalAgent=agent||salesman||"Unknown"; let rawDate=(idxDate>=0&&row[idxDate])?row[idxDate]:null; let date=parseExcelDate(rawDate); if(!date) continue; transactions.push({agent:finalAgent,agentCode:agent,salesman:salesman,company:company,subtotal,qty,margin,profit,date}); }
+        if(transactions.length===0) throw new Error("No valid transactions found");
         rawData=transactions; let maxDate=new Date(0); rawData.forEach(t=>{if(t.date>maxDate) maxDate=t.date;}); lastUpdateDate=maxDate;
+        saveSalesData();
         document.getElementById('sales-lastUpdateTimeDisplay').innerText = maxDate.toLocaleDateString();
         refreshSalesUI();
-        alert(`✅ Loaded ${transactions.length} transactions`);
+        return transactions.length;
       }
+
       function refreshSalesUI() { buildKPIs(); buildAgentTable(); buildDealerTable(); buildTopDealer(); buildCharts(); }
+
       function buildKPIs() {
         let maxDate=rawData.length>0?rawData.reduce((max,t)=>t.date>max?t.date:max,new Date(0)):new Date(0);
         let ly=maxDate.getFullYear(), lm=maxDate.getMonth();
         let currentMonthSales=rawData.length>0?rawData.filter(t=>t.date.getFullYear()===ly&&t.date.getMonth()===lm).reduce((s,t)=>s+t.subtotal,0):0;
         if(monthlyTarget===0) monthlyTarget=currentMonthSales*1.2;
+        localStorage.setItem('sal_monthlyTarget', monthlyTarget);
         let achievement=monthlyTarget?(currentMonthSales/monthlyTarget)*100:0;
         let balanceToGo=monthlyTarget-currentMonthSales;
         let last3MonthsRevenue=getLast3MonthsRevenue();
-        let totalProfit=rawData.reduce((s,t)=>s+t.profit,0);
         let remainingDays=localStorage.getItem('remainingWorkingDays')||'';
         document.getElementById('salesKpiGrid').innerHTML = `
           <div class="kpi"><div class="kpi-label">Total Revenue (Last 3 Months)</div><div class="kpi-value">${formatRM(last3MonthsRevenue)}</div><div class="kpi-small">Excluding current month</div></div>
           <div class="kpi"><div class="kpi-label">Monthly Sales (Latest Month)</div><div class="kpi-value">${formatRM(currentMonthSales)}</div><div class="kpi-small"><span class="highlight-date">Data as of: ${maxDate.toLocaleDateString()}</span></div></div>
           <div class="kpi"><div class="kpi-label">Monthly Target</div><div class="kpi-value"><span class="editable-target" onclick="window.editSalesTarget()">${formatRM(monthlyTarget)}</span></div><div class="kpi-small">Click to edit</div></div>
-          <div class="kpi"><div class="kpi-label">Achievement %</div><div class="kpi-value">${achievement.toFixed(1)}%</div><div class="kpi-small">vs Target</div><div class="inline-row"><div class="inline-item"><div class="label">Remaining Working Days</div><div class="value"><span id="remainingDaysInput" class="editable-number" contenteditable="true">${remainingDays}</span></div></div></div></div>
+          <div class="kpi"><div class="kpi-label">Achievement %</div><div class="kpi-value">${achievement.toFixed(1)}%</div><div class="kpi-small">vs Target</div><div class="inline-row"><div class="inline-item"><div class="label">Remaining Working Days</div><div class="value"><input type="number" id="remainingDaysInput" inputmode="numeric" value="${remainingDays}" style="background:#fef9c3;border:1px solid #e2e8f0;border-radius:12px;padding:4px 10px;font-size:14px;width:80px;text-align:center;"></div></div></div></div>
           <div class="kpi"><div class="kpi-label">Balance To Go</div><div class="kpi-value">${formatRM(balanceToGo)}</div><div class="daily-item"><div class="label">Daily Required Sale</div><div class="value" id="dailyRequiredSale">${formatRM(0)}</div></div></div>
         `;
         updateDailyRequired(balanceToGo);
         const remainingInput = document.getElementById('remainingDaysInput');
         if(remainingInput) {
-          remainingInput.addEventListener('blur', function(){ let days=parseFloat(this.innerText.replace(/[^0-9]/g,'')); if(isNaN(days)||days<1) days=''; localStorage.setItem('remainingWorkingDays',days); updateDailyRequired(balanceToGo); });
-          remainingInput.addEventListener('keypress', function(e){ if(e.key==='Enter'){ e.preventDefault(); this.blur(); } });
+          remainingInput.addEventListener('change', function(){
+            let days = parseInt(this.value, 10);
+            if (isNaN(days) || days < 1) days = '';
+            localStorage.setItem('remainingWorkingDays', days);
+            updateDailyRequired(balanceToGo);
+          });
         }
       }
+
       function updateDailyRequired(balanceToGo) {
-        const remainingSpan = document.getElementById('remainingDaysInput');
+        const remainingInput = document.getElementById('remainingDaysInput');
         const dailySpan = document.getElementById('dailyRequiredSale');
-        if(!remainingSpan||!dailySpan) return;
-        let days = parseFloat(remainingSpan.innerText.replace(/[^0-9\.]/g,''));
+        if(!remainingInput||!dailySpan) return;
+        let days = parseInt(remainingInput.value, 10);
         dailySpan.innerText = (isNaN(days)||days<=0) ? formatRM(0) : formatRM(balanceToGo/days);
       }
-      window.editSalesTarget = function() { let newTarget = prompt("Enter Monthly Target (RM):", monthlyTarget.toFixed(2)); if(newTarget !== null && !isNaN(parseFloat(newTarget))) { monthlyTarget = parseFloat(newTarget); refreshSalesUI(); } };
+
+      window.editSalesTarget = function() {
+        let newTarget = prompt("Enter Monthly Target (RM):", monthlyTarget.toFixed(2));
+        if(newTarget !== null && !isNaN(parseFloat(newTarget))) {
+          monthlyTarget = parseFloat(newTarget);
+          localStorage.setItem('sal_monthlyTarget', monthlyTarget);
+          refreshSalesUI();
+        }
+      };
+
       function getAgentMonthlyData() {
-        if(rawData.length===0) return {labels:[],data:[]};
+        if(rawData.length===0) return {labels:[],data:[],codes:[]};
         let maxDate=new Date(0); rawData.forEach(r=>{if(r.date>maxDate) maxDate=r.date;});
         let ly=maxDate.getFullYear(), lm=maxDate.getMonth();
         let map=new Map();
         rawData.forEach(r=>{ let code=r.agentCode||r.agent; if(!code) return; if(r.date.getFullYear()===ly&&r.date.getMonth()===lm) map.set(code,(map.get(code)||0)+r.subtotal); });
         let arr=Array.from(map.entries()).map(([code,rev])=>({code,rev})); arr.sort((a,b)=>b.rev-a.rev);
-        return {labels:arr.map(a=>agentNameMap[a.code]||a.code), data:arr.map(a=>a.rev)};
+        return { labels: arr.map(a=>agentNameMap[a.code]||a.code), data: arr.map(a=>a.rev), codes: arr.map(a=>a.code) };
       }
-      function createChartConfig(type,label,data,bgColor){
-        return {type,data:{labels:data.labels,datasets:[{label,data:data.data,backgroundColor:bgColor,borderRadius:8,barPercentage:0.7}]},options:{responsive:true,maintainAspectRatio:true,plugins:{tooltip:{callbacks:{label:(ctx)=>formatRM(ctx.raw)}},legend:{display:false},datalabels:{display:(ctx)=>ctrlPressed,color:'#1e293b',backgroundColor:'rgba(255,255,255,0.7)',borderRadius:12,padding:4,font:{weight:'bold',size:11},formatter:(value)=>formatRM(value),anchor:'end',align:'top',offset:4}},scales:{y:{ticks:{callback:(val)=>formatRM(val)},grid:{color:'#e2e8f0'}},x:{grid:{display:false}}}}};
+
+      function createChartConfig(type, label, chartData, bgColor) {
+        return {
+          type,
+          data: { labels: chartData.labels, datasets: [{ label, data: chartData.data, backgroundColor: bgColor, borderRadius: 8, barPercentage: 0.7 }] },
+          options: {
+            responsive: true, maintainAspectRatio: true,
+            plugins: {
+              tooltip: { callbacks: { label: (ctx) => formatRM(ctx.raw) } },
+              legend: { display: false },
+              datalabels: {
+                display: (ctx) => ctrlPressed,
+                color: '#1e293b', backgroundColor: 'rgba(255,255,255,0.7)', borderRadius: 12, padding: 4,
+                font: { weight: 'bold', size: 11 }, formatter: (value) => formatRM(value), anchor: 'end', align: 'top', offset: 4
+              }
+            },
+            scales: {
+              y: { ticks: { callback: (val) => formatRM(val) }, grid: { color: '#e2e8f0' } },
+              x: { grid: { display: false } }
+            }
+          }
+        };
       }
+
       function buildCharts() {
+        if (window.Chart && window.ChartDataLabels) {
+          Chart.register(ChartDataLabels);
+        }
         let months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
         let monthly=new Array(12).fill(0); rawData.forEach(r=>{monthly[r.date.getMonth()]+=r.subtotal;});
         const agentData=getAgentMonthlyData();
         const colors=['#e6194b','#f58231','#ffe119','#bfef45','#3cb44b','#42d4f4','#4363d8','#911eb4','#f032e6','#a9a9a9'];
         if(salesChart) salesChart.destroy();
         if(agentChart) agentChart.destroy();
-        salesChart=new Chart(document.getElementById('salesChart'), createChartConfig('bar','Monthly Revenue',{labels:months,data:monthly},'#2563eb'));
-        agentChart=new Chart(document.getElementById('agentPerfChart'), createChartConfig('bar','Agent Sales',agentData,agentData.labels.map((_,i)=>colors[i%colors.length])));
+        salesChart = new Chart(document.getElementById('salesChart'), createChartConfig('bar', 'Monthly Revenue', {labels: months, data: monthly}, '#2563eb'));
+        const agentColors = agentData.codes.map((code, i) => code === 'B003' ? '#FF69B4' : colors[i % colors.length]);
+        agentChart = new Chart(document.getElementById('agentPerfChart'), createChartConfig('bar', 'Agent Sales', { labels: agentData.labels, data: agentData.data }, agentColors));
       }
-      document.addEventListener('keydown',e=>{if(e.key==='Control'){ctrlPressed=true;if(salesChart)salesChart.update();if(agentChart)agentChart.update();}});
-      document.addEventListener('keyup',e=>{if(e.key==='Control'){ctrlPressed=false;if(salesChart)salesChart.update();if(agentChart)agentChart.update();}});
+
+      document.addEventListener('keydown', e => { if (e.key === 'Control' || e.ctrlKey) { ctrlPressed = true; if(salesChart) salesChart.update(); if(agentChart) agentChart.update(); } });
+      document.addEventListener('keyup', e => { if (e.key === 'Control' || !e.ctrlKey) { ctrlPressed = false; if(salesChart) salesChart.update(); if(agentChart) agentChart.update(); } });
+
+      document.getElementById('toggleLabelsBtn').addEventListener('click', () => {
+        ctrlPressed = !ctrlPressed;
+        if(salesChart) salesChart.update();
+        if(agentChart) agentChart.update();
+      });
+
       function buildAgentTable() {
         const tbody=document.querySelector('#sales-agentTable tbody');
         const tfoot=document.getElementById('sales-agentTableFoot');
@@ -1462,12 +1812,30 @@
           agents.push({code,name:agentNameMap[code]||code,revenue:val.latestRevenue,hitRate,target,balanceToGo,balancePct});
         }
         agents.sort((a,b)=>{ let va,vb; switch(agentSortColumn){ case'revenue':va=a.revenue;vb=b.revenue;break; case'hitrate':va=a.hitRate;vb=b.hitRate;break; case'target':va=a.target;vb=b.target;break; case'balance':va=a.balanceToGo;vb=b.balanceToGo;break; case'balancePct':va=a.balancePct;vb=b.balancePct;break; default:va=a.revenue;vb=b.revenue; } return agentSortDirection==='asc'?va-vb:vb-va; });
-        tbody.innerHTML=agents.map((a,idx)=>`<tr><td>${idx+1}</td><td>${a.code}</td><td><input class="agent-name-input" data-code="${a.code}" value="${a.name.replace(/&/g,'&amp;')}"></td><td>${formatRM(a.revenue)}</td><td class="${a.hitRate>=0?'green':'red'}">${a.hitRate.toFixed(2)}%</td><td><span class="editable-target agent-target" data-code="${a.code}">${formatRM(a.target)}</span></td><td>${formatRM(a.balanceToGo)}</td><td class="${a.balancePct>=0?'red':'green'}">${a.balancePct.toFixed(2)}%</td></tr>`).join('');
+        tbody.innerHTML=agents.map((a,idx)=>`<tr><td>${idx+1}</td><td>${escHtml(a.code)}</td><td><input class="agent-name-input" data-code="${escHtml(a.code)}" value="${escHtml(a.name)}"></td><td>${formatRM(a.revenue)}</td><td class="${a.hitRate>=0?'green':'red'}">${a.hitRate.toFixed(2)}%</td><td><span class="editable-target agent-target" data-code="${escHtml(a.code)}">${formatRM(a.target)}</span></td><td>${formatRM(a.balanceToGo)}</td><td class="${a.balancePct>=0?'red':'green'}">${a.balancePct.toFixed(2)}%</td></tr>`).join('');
         let totalRev=agents.reduce((s,a)=>s+a.revenue,0), totalTarget=agents.reduce((s,a)=>s+a.target,0), totalBal=totalTarget-totalRev;
         tfoot.innerHTML=`<tr class="total-row"><td colspan="3">Total</td><td>${formatRM(totalRev)}</td><td>${totalTarget?(totalRev/totalTarget*100).toFixed(2):'0.00'}%</td><td>${formatRM(totalTarget)}</td><td>${formatRM(totalBal)}</td><td>${totalTarget?(totalBal/totalTarget*100).toFixed(2):'0.00'}%</td></tr>`;
-        $$s('.agent-name-input').forEach(inp=>{ inp.onchange=()=>{ agentNameMap[inp.dataset.code]=inp.value; buildAgentTable(); buildCharts(); }; });
-        $$s('.agent-target').forEach(el=>{ el.onclick=()=>{ let code=el.dataset.code; let cur=parseFloat(el.innerText.replace(/[^0-9.-]/g,'')); let n=prompt("New target:",cur); if(n&&!isNaN(parseFloat(n))){ agentTargetOverride.set(code,parseFloat(n)); buildAgentTable(); } }; });
+        $$s('.agent-name-input').forEach(inp=>{ inp.onchange=()=>{ agentNameMap[inp.dataset.code]=inp.value; localStorage.setItem('sal_agentNameMap', JSON.stringify(agentNameMap)); buildAgentTable(); buildCharts(); }; });
+        $$s('.agent-target').forEach(el=>{ el.onclick=()=>{
+          let code = el.dataset.code;
+          let currentVal = parseFloat(el.innerText.replace(/[^0-9.-]/g,''));
+          let input = document.createElement('input');
+          input.type = 'number'; input.inputMode = 'decimal'; input.value = currentVal;
+          input.style.cssText = 'width:100%;background:#fef9c3;border:1px solid #e2e8f0;border-radius:8px;padding:4px 8px;font-size:14px;';
+          el.innerHTML = ''; el.appendChild(input); input.focus(); input.select();
+          const save = () => {
+            let newVal = parseFloat(input.value);
+            if (!isNaN(newVal) && newVal > 0) {
+              agentTargetOverride.set(code, newVal);
+              localStorage.setItem('sal_agentTargetOverride', JSON.stringify([...agentTargetOverride]));
+            }
+            buildAgentTable();
+          };
+          input.addEventListener('blur', save);
+          input.addEventListener('keypress', (e) => { if (e.key === 'Enter') save(); });
+        }; });
       }
+
       function buildDealerTable() {
         const tbody=document.querySelector('#sales-dealerTable tbody');
         if(rawData.length===0){tbody.innerHTML='<tr><td colspan="7" class="no-data-message">No dealer data.</td></tr>';return;}
@@ -1481,7 +1849,6 @@
           if(diff===0) o.m0+=r.subtotal;
           else if(diff===1) o.m1+=r.subtotal;
           else if(diff===2) o.m2+=r.subtotal;
-          // 记录最后一个agentCode（或可改为取最多的）
           if(r.agentCode) o.agentCode = r.agentCode;
         });
         let list=Array.from(map.entries()).map(([n,v])=>({dealer:n, agentCode:v.agentCode, thisMonth:v.m0, lastMonth:v.m1, twoMonthsAgo:v.m2, qtd:v.m0+v.m1+v.m2, mom:v.m1?((v.m0-v.m1)/v.m1)*100:0}));
@@ -1500,11 +1867,12 @@
           if(typeof va==='string') return dealerSortDirection==='asc'?va.localeCompare(vb):vb.localeCompare(va);
           return dealerSortDirection==='asc'?va-vb:vb-va;
         });
-        tbody.innerHTML=list.map(d=>`<tr><td>${d.dealer}</td><td>${d.agentCode||''}</td><td class="highlight-month">${formatRM(d.thisMonth)}</td><td>${formatRM(d.lastMonth)}</td><td>${formatRM(d.twoMonthsAgo)}</td><td>${formatRM(d.qtd)}</td><td class="${d.mom>=0?'green':'red'}">${d.mom.toFixed(1)}%</td></tr>`).join('');
+        tbody.innerHTML=list.map(d=>`<tr><td>${escHtml(d.dealer)}</td><td>${escHtml(d.agentCode||'')}</td><td class="highlight-month">${formatRM(d.thisMonth)}</td><td>${formatRM(d.lastMonth)}</td><td>${formatRM(d.twoMonthsAgo)}</td><td>${formatRM(d.qtd)}</td><td class="${d.mom>=0?'green':'red'}">${d.mom.toFixed(1)}%</td></tr>`).join('');
         let total={m0:0,m1:0,m2:0}; for(let v of map.values()){total.m0+=v.m0;total.m1+=v.m1;total.m2+=v.m2;}
         let totalMom=total.m1?((total.m0-total.m1)/total.m1)*100:0;
         tbody.innerHTML+=`<tr class="total-row"><td>📊 ALL DEALERS</td><td></td><td class="highlight-month">${formatRM(total.m0)}</td><td>${formatRM(total.m1)}</td><td>${formatRM(total.m2)}</td><td>${formatRM(total.m0+total.m1+total.m2)}</td><td class="${totalMom>=0?'green':'red'}">${totalMom.toFixed(1)}%</td></tr>`;
       }
+
       function buildTopDealer() {
         const div=document.getElementById('salesTopDealerList');
         if(rawData.length===0){div.innerHTML='<div class="no-data-message">No data</div>';return;}
@@ -1512,12 +1880,14 @@
         let ly=maxDate.getFullYear(), lm=maxDate.getMonth();
         let map=new Map(); rawData.forEach(r=>{ if(r.date.getFullYear()===ly&&r.date.getMonth()===lm) map.set(r.company,(map.get(r.company)||0)+r.subtotal); });
         let arr=Array.from(map.entries()).sort((a,b)=>b[1]-a[1]).slice(0,10);
-        div.innerHTML=arr.map(([n,rev],i)=>`<div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #f1f5f9;"><div>${i+1}. ${n}</div><div style="font-weight:700;color:#2563eb;">${formatRM(rev)}</div></div>`).join('') || '<div>No data</div>';
+        div.innerHTML=arr.map(([n,rev],i)=>`<div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #f1f5f9;"><div>${i+1}. ${escHtml(n)}</div><div style="font-weight:700;color:#2563eb;">${formatRM(rev)}</div></div>`).join('') || '<div>No data</div>';
       }
+
       function initSalesSorting() {
         $$s('#sales-agentTable th[data-sort]').forEach(th=>{ th.onclick=()=>{ let key=th.dataset.sort; if(agentSortColumn===key) agentSortDirection=agentSortDirection==='asc'?'desc':'asc'; else{agentSortColumn=key;agentSortDirection='desc';} buildAgentTable(); }; });
         $$s('#sales-dealerTable th[data-sort]').forEach(th=>{ th.onclick=()=>{ let key=th.dataset.sort; if(dealerSortColumn===key) dealerSortDirection=dealerSortDirection==='asc'?'desc':'asc'; else{dealerSortColumn=key;dealerSortDirection='desc';} buildDealerTable(); }; });
       }
+
       function updateSyncStatus(success, message) {
         const iconDiv = document.getElementById('syncStatusIcon');
         const timeSpan = document.getElementById('syncLastTime');
@@ -1527,6 +1897,7 @@
         statusText.innerText = message || (success ? 'Synced' : 'Sync failed');
         timeSpan.innerText = `${success ? 'Last sync' : 'Failed'}: ${new Date().toLocaleString()}`;
       }
+
       async function syncSalesFromCloud() {
         const btn = document.getElementById('sales-syncCloudBtn');
         if (!btn) return;
@@ -1535,7 +1906,7 @@
         btn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Syncing…';
         updateSyncStatus(false, 'Syncing…');
         if (typeof XLSX === 'undefined') {
-          alert('Excel library not loaded yet. Please wait a moment and try again.');
+          setSalesStatus('Excel library not loaded.');
           btn.disabled = false;
           btn.innerHTML = originalHTML;
           updateSyncStatus(false, 'Library missing');
@@ -1553,41 +1924,64 @@
             const sheet = wb.Sheets[wb.SheetNames[0]];
             let rows = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: "" });
             if (rows.length > 2) {
-              processRows(rows);
-              updateSyncStatus(true, 'Synced successfully');
+              try {
+                const count = processRows(rows);
+                updateSyncStatus(true, 'Synced successfully');
+                setSalesStatus(`Loaded ${count} transactions from cloud`);
+              } catch (err) {
+                window.showConfirm(`Sync error: ${err.message}. Do you want to clear and retry?`, () => { clearSalesData(); syncSalesFromCloud(); });
+                updateSyncStatus(false, err.message);
+              }
             } else {
-              throw new Error('No data found in the cloud file.');
+              window.showConfirm('No data found in the cloud file.', null);
+              updateSyncStatus(false, 'No data');
             }
             btn.disabled = false;
             btn.innerHTML = originalHTML;
           };
-          reader.onerror = () => { throw new Error('Failed to read cloud file.'); };
+          reader.onerror = () => {
+            updateSyncStatus(false, 'Failed to read cloud file');
+            btn.disabled = false;
+            btn.innerHTML = originalHTML;
+          };
           reader.readAsArrayBuffer(file);
         } catch (err) {
-          console.error(err);
+          window.showConfirm(`Sync failed: ${err.message}. Please try again later.`, null);
           updateSyncStatus(false, `Sync failed: ${err.message}`);
-          alert(`Sync failed: ${err.message}`);
           btn.disabled = false;
           btn.innerHTML = originalHTML;
         }
       }
+
       function exportCSV() {
-        if(!rawData.length) return alert('No data');
-        let csv='Agent,AgentCode,Company,Date,Qty,Subtotal,Margin,Profit\n'+rawData.map(r=>`"${r.agent}","${r.agentCode}","${r.company}","${r.date.toISOString().slice(0,10)}",${r.qty},${r.subtotal},${r.margin},${r.profit}`).join('\n');
-        let blob=new Blob([csv],{type:'text/csv'}); saveAs(blob,'sales_data.csv');
+        if(!rawData.length) { setSalesStatus('No data to export'); return; }
+        const csv = 'Agent,AgentCode,Company,Date,Qty,Subtotal,Margin,Profit\n' +
+          rawData.map(r => `"${escHtml(r.agent)}","${escHtml(r.agentCode)}","${escHtml(r.company)}","${r.date.toISOString().slice(0,10)}",${r.qty},${r.subtotal},${r.margin},${r.profit}`).join('\n');
+        const blob = new Blob([csv], { type: 'text/csv' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'sales_data.csv';
+        a.click();
+        setTimeout(() => URL.revokeObjectURL(url), 1500);
       }
+
       function exportExcel() {
-        if(!rawData.length) return alert('No data');
-        let ws=XLSX.utils.aoa_to_sheet([['Agent','AgentCode','Company','Date','Qty','Subtotal','Margin','Profit'],...rawData.map(r=>[r.agent,r.agentCode,r.company,r.date.toISOString().slice(0,10),r.qty,r.subtotal,r.margin,r.profit])]);
-        let wb=XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb,ws,'Sales'); XLSX.writeFile(wb,'sales_data.xlsx');
+        if(!rawData.length) { setSalesStatus('No data to export'); return; }
+        let ws = XLSX.utils.aoa_to_sheet([['Agent','AgentCode','Company','Date','Qty','Subtotal','Margin','Profit'], ...rawData.map(r => [r.agent, r.agentCode, r.company, r.date.toISOString().slice(0,10), r.qty, r.subtotal, r.margin, r.profit])]);
+        let wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, 'Sales'); XLSX.writeFile(wb, 'sales_data.xlsx');
       }
+
       function clearSalesData() {
-        if(confirm('Clear all sales data?')){
-          rawData=[]; monthlyTarget=0; agentTargetOverride.clear();
+        window.showConfirm('Clear all sales data? This cannot be undone.', () => {
+          rawData = []; monthlyTarget = 0; agentTargetOverride.clear();
+          localStorage.removeItem(SALES_STORAGE); localStorage.removeItem('sal_agentTargetOverride');
+          localStorage.removeItem('sal_monthlyTarget');
           refreshSalesUI();
-          document.getElementById('sales-lastUpdateTimeDisplay').innerText='—';
+          document.getElementById('sales-lastUpdateTimeDisplay').innerText = '—';
           updateSyncStatus(false, 'Not synced');
-        }
+          setSalesStatus('Sales data cleared');
+        });
       }
 
       function bindSalesEvents() {
@@ -1603,36 +1997,37 @@
                 const wb = XLSX.read(data, { type: 'array' });
                 const sheet = wb.Sheets[wb.SheetNames[0]];
                 let rows = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: "" });
-                if (rows.length > 2) processRows(rows);
-                else alert("File too short");
+                if (rows.length > 2) {
+                  try {
+                    processRows(rows);
+                    setSalesStatus(`Loaded ${rawData.length} transactions`);
+                  } catch (err) {
+                    window.showConfirm(`Error: ${err.message}`, null);
+                  }
+                } else {
+                  window.showConfirm("File too short or no data found.", null);
+                }
               };
+              reader.onerror = () => { window.showConfirm('Failed to read file.', null); };
               reader.readAsArrayBuffer(e.target.files[0]);
             }
           });
         }
 
-        const syncBtn = document.getElementById('sales-syncCloudBtn');
-        if (syncBtn) syncBtn.addEventListener('click', syncSalesFromCloud);
-
-        const exportCSVBtn = document.getElementById('sales-exportCSVBtn');
-        if (exportCSVBtn) exportCSVBtn.addEventListener('click', exportCSV);
-
-        const exportExcelBtn = document.getElementById('sales-exportExcelBtn');
-        if (exportExcelBtn) exportExcelBtn.addEventListener('click', exportExcel);
-
-        const clearBtn = document.getElementById('sales-clearDataBtn');
-        if (clearBtn) clearBtn.addEventListener('click', clearSalesData);
-
+        document.getElementById('sales-syncCloudBtn').addEventListener('click', syncSalesFromCloud);
+        document.getElementById('sales-exportCSVBtn').addEventListener('click', exportCSV);
+        document.getElementById('sales-exportExcelBtn').addEventListener('click', exportExcel);
+        document.getElementById('sales-clearDataBtn').addEventListener('click', clearSalesData);
         initSalesSorting();
-        refreshSalesUI();
-        updateSyncStatus(false, 'Not synced');
+        if (hasSavedData) {
+          refreshSalesUI();
+          updateSyncStatus(true, 'Restored from local');
+          setSalesStatus('Sales data restored from previous session');
+        } else {
+          refreshSalesUI();
+          updateSyncStatus(false, 'Not synced');
+        }
         window.refreshSalesDashboard = refreshSalesUI;
-      }
-
-      if (typeof saveAs === 'undefined') {
-        let s = document.createElement('script');
-        s.src = 'https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js';
-        document.head.appendChild(s);
       }
 
       document.addEventListener('DOMContentLoaded', bindSalesEvents);
